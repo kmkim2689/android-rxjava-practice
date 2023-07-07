@@ -10,3 +10,7 @@
   * up to 10 'objects' can be checked up
   * 즉, just에 11개의 Int를 넘겨줄 수는 없지만, 11개의 정수가 들어있는 mutableList는 넘겨줄 수 있음
   
+* from : convert 'various' other object's' and data type's' into observables
+  * can create observables from different type of objects!!
+  * fromArray()
+    * 
