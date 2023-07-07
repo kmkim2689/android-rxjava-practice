@@ -36,3 +36,32 @@ fun fromOperator() {
 
     observable.subscribe(observer)
 }
+
+fun fromIterableOperator() {
+    //Converts an Iterable sequence into an Observable that emits the items in the sequence.
+    // it's emitting each item in an iterable object, not an object!
+    // emits the item in the sequence.
+    val observable = Observable.fromIterable(mListNum)
+
+    // list 내부의 값들은 Int로 이뤄져 있음. 따라서 observe의 대상 역시 Int가 되어야함.
+    val observer = object : Observer<Int> {
+        override fun onSubscribe(d: Disposable) {
+            Log.d(MainActivity.TAG, "onSubscribe")
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d(MainActivity.TAG, "onError, $e")
+        }
+
+        override fun onComplete() {
+            Log.d(MainActivity.TAG, "onComplete")
+        }
+
+        override fun onNext(t: Int) {
+            Log.d(MainActivity.TAG, "onNext, $t")
+        }
+
+    }
+
+    observable.subscribe(observer)
+}

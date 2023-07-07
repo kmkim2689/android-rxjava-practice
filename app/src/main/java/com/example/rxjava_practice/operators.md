@@ -13,4 +13,7 @@
 * from : convert 'various' other object's' and data type's' into observables
   * can create observables from different type of objects!!
   * fromArray()
-    * 
+  * fromIterable()
+    * Converts an Iterable sequence into an Observable that emits the items in the sequence.
+    * it's emitting each item in an iterable object, not an object!
+    * emits the item in the sequence.

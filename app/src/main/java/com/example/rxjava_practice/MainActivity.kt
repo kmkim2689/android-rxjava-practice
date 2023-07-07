@@ -16,13 +16,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fromOperator()
+//        fromOperator()
+        fromIterableOperator()
+
 
         /*
         log 결과
         onSubscribe
-        onNext, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        onNext, [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        onNext, 1
+        onNext, 2
+        onNext, 3
+        onNext, 4
+        onNext, 5
+        onNext, 6
+        onNext, 7
+        onNext, 8
+        onNext, 9
+        onNext, 10
         onComplete
          */
     }
