@@ -51,3 +51,8 @@
   * count : the number of sequential integers to generate
     * how many sequential you want to generate
   * return : an observable that emits a sequence of integer within a specified range
+
+* repeat
+  * range operator와 함께 사용
+  * range(start, range).repeat(iteration)
+  * range operator를 반복할 횟수를 정함
