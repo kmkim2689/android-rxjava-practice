@@ -4,6 +4,7 @@ import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
+import java.lang.Exception
 import java.util.Arrays
 import java.util.concurrent.TimeUnit
 
@@ -90,4 +91,23 @@ fun intervalOperator(): Observable<Long> {
 fun timerOperator(): Observable<Long> {
     // 5초 뒤 value를 하나 반환하고, complete
     return Observable.timer(5, TimeUnit.SECONDS)
+}
+
+// createOperator()가 return하는 Observable의 type은 정하기 나름...
+fun createOperator(): Observable<Int> {
+    // ObserveOnSubscribe 매개변수
+    // 구현부에서 작동할 콜백에 대한 자세한 구현을 정한다. 특히 onNext와 onError의 매개변수를 정함으로써 customizing이 가능해진다.
+    return Observable.create { emitter ->
+        try {
+            for (i in mListNum) {
+                emitter.onNext(i * 5)
+            }
+            // 모든 데이터가 emit된 뒤 complete로 가게 하려면 꼭 이 코드를 작성해야 한다.
+            // 이렇게 해야 실제 구현하는 부분에서 onComplete 콜백이 동작한다.
+            emitter.onComplete()
+
+        } catch(e: Exception) {
+            emitter.onError(e)
+        }
+    }
 }

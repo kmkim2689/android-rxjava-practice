@@ -1,5 +1,6 @@
 package com.example.rxjava_practice
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,7 @@ class MainActivity : AppCompatActivity() {
         const val TAG = "MainActivity"
     }
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,10 +51,22 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        )
 
-        timerOperator().subscribe(
+//        timerOperator().subscribe(
+//            {
+//                Log.d(TAG, "onNext, $it")
+//                getLocation()
+//            },
+//            {
+//                Log.d(TAG, "onError, $it")
+//            },
+//            {
+//                Log.d(TAG, "onComplete")
+//            }
+//        )
+
+        createOperator().subscribe(
             {
                 Log.d(TAG, "onNext, $it")
-                getLocation()
             },
             {
                 Log.d(TAG, "onError, $it")
@@ -72,9 +86,16 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    ...5초 후
-    onNext, 0
-    latitude: 100, longitude: 1
+    onNext, 5
+    onNext, 10
+    onNext, 15
+    onNext, 20
+    onNext, 25
+    onNext, 30
+    onNext, 35
+    onNext, 40
+    onNext, 45
+    onNext, 50
     onComplete
      */
 }
