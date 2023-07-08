@@ -56,3 +56,19 @@
   * range operator와 함께 사용
   * range(start, range).repeat(iteration)
   * range operator를 반복할 횟수를 정함
+
+* interval()
+  * Returns an Observable that emits 'a sequential number every specified interval of time.'
+  * 정해진 시작 시점과 정해진 간격에 따라 0부터 1씩 늘려가면서 정수를 하나씩 발행한다.
+  * parameters
+    * initialDelay : Long => the initial delay time to wait before emitting the 'first' value
+    * => 즉, 첫 발행 시까지 걸리는 시간을 조절
+    * period: Long => the period of time 'between' emissions of subsequent nums
+    * => 즉, 각 발행 사이에 걸리는 시간
+    * unit: TimeUnit => the time unit for both initialDelay and period
+    * => 시간 단위 day / minute / millisecond / second 등등...
+  * 정해진 시간 간격마다 어떠한 작업을 수행해야 할 때, interval 함수가 유용하다.
+  * 또한, 정해진 시간에 따라 특정 작업을 수행할 때도 이것을 사용하면 유용하다
+  * 특정 시점에서 멈추고 싶다면, .takeWhile() 메소드를 함께 사용
+  * interval().takeWhile() => takeWhile 안에는 함수가 들어감. 매개변수는 onNext로 나오는 value를 가리킴(인덱스)
+    * 구현부에서 value에 대한 조건문이 false라면 발행을 멈춘다.

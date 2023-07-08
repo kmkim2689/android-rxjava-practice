@@ -35,44 +35,51 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        )
 
-        repeatOperator().subscribe(
+        intervalOperator().subscribe(
             {
-                // onNext 람다식
                 Log.d(TAG, "onNext, $it")
+                // every second, get location
+                getLocation()
             },
             {
-                // onError 람다식
                 Log.d(TAG, "onError, $it")
             },
             {
-                // onComplete 람다식
                 Log.d(TAG, "onComplete")
             }
         )
 
-        /*
-        log 결과 (range start : 1, count : 10, repeat : 2)
-        onNext, 1
-        onNext, 2
-        onNext, 3
-        onNext, 4
-        onNext, 5
-        onNext, 6
-        onNext, 7
-        onNext, 8
-        onNext, 9
-        onNext, 10
-        onNext, 1
-        onNext, 2
-        onNext, 3
-        onNext, 4
-        onNext, 5
-        onNext, 6
-        onNext, 7
-        onNext, 8
-        onNext, 9
-        onNext, 10
-        onComplete
-         */
+
     }
+
+    // get location every min
+    private fun getLocation() {
+        Log.d(TAG, "latitude: 100, longitude: 1")
+    }
+
+    /*
+    Log 결과
+    onNext, 0
+    latitude: 100, longitude: 1
+    onNext, 1
+    latitude: 100, longitude: 1
+    onNext, 2
+    latitude: 100, longitude: 1
+    onNext, 3
+    latitude: 100, longitude: 1
+    onNext, 4
+    latitude: 100, longitude: 1
+    onNext, 5
+    latitude: 100, longitude: 1
+    onNext, 6
+    latitude: 100, longitude: 1
+    onNext, 7
+    latitude: 100, longitude: 1
+    onNext, 8
+    latitude: 100, longitude: 1
+    onNext, 9
+    latitude: 100, longitude: 1
+    onComplete
+
+     */
 }

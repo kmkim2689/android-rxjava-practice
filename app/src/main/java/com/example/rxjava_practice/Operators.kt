@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
 import java.util.Arrays
+import java.util.concurrent.TimeUnit
 
 val mListNum = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 val arrayNum1 = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -72,4 +73,16 @@ fun rangeOperator(): Observable<Int> {
 
 fun repeatOperator(): Observable<Int> {
     return Observable.range(1, 10).repeat(2)
+}
+
+// interval : Observable<Long> 타입을 반환한다.
+fun intervalOperator(): Observable<Long> {
+    // initialDelay => 처음 시작되기까지 걸리는 시간은 2초. 생략 시, period의 값으로 대체
+    // period => 1초(timeUnit이 Second이므로)마다 한번씩 발행. 계속 발행되는 사이사이의 시간이 모두 1초로 동일.
+    // 1초마다 한번씩 '0'***부터 정수가 계속 발행된다. 액티비티가 destroy되지 않는 한, 발행을 멈추지 않는다.
+    // takeWhile()을 사용하여, 멈출 시점을 명시
+    return Observable.interval(2, 1, TimeUnit.SECONDS).takeWhile { value ->
+        // 10초 전까지만 발행한다.
+        value < 10
+    }
 }
