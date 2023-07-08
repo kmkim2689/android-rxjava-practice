@@ -66,9 +66,18 @@
     * period: Long => the period of time 'between' emissions of subsequent nums
     * => 즉, 각 발행 사이에 걸리는 시간
     * unit: TimeUnit => the time unit for both initialDelay and period
-    * => 시간 단위 day / minute / millisecond / second 등등...
+    * => 시간 단위 day / minute / millisecond / seconds 등등...
   * 정해진 시간 간격마다 어떠한 작업을 수행해야 할 때, interval 함수가 유용하다.
   * 또한, 정해진 시간에 따라 특정 작업을 수행할 때도 이것을 사용하면 유용하다
   * 특정 시점에서 멈추고 싶다면, .takeWhile() 메소드를 함께 사용
   * interval().takeWhile() => takeWhile 안에는 함수가 들어감. 매개변수는 onNext로 나오는 value를 가리킴(인덱스)
     * 구현부에서 value에 대한 조건문이 false라면 발행을 멈춘다.
+    
+* timer()
+  * one time emission of a value
+  * returns an observable that emits a value after a specified delay,
+    * and then ***completes***
+    * not emitting continuously compared to interval()
+  * parameters
+    * delay : the initial delay before emitting a single value => Long
+    * unit : time units to use for delay => timeUnit

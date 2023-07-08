@@ -86,3 +86,8 @@ fun intervalOperator(): Observable<Long> {
         value < 10
     }
 }
+
+fun timerOperator(): Observable<Long> {
+    // 5초 뒤 value를 하나 반환하고, complete
+    return Observable.timer(5, TimeUnit.SECONDS)
+}
