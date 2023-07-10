@@ -127,3 +127,16 @@
   * parameter : ketSelector 함수
     * 예를 들어, 데이터 클래스의 어떤 항목이 같은 것을 걸러낼 것인지 함수로 명시
     * 아무것도 넘겨주지 않으면, 완전히 일치하는 것을 걸러냄.
+    
+* skip()
+  * suppress 'the first n(defined number of...) items' emitted by an observable
+  * 처음 n개 item을 skip하고 발행
+  * 예를 들어, observable에서 1, 2, 3, 4를 발행하는데 skip(2)를 적용한다면, 3, 4만 발행
+  * parameter case1 : count based skip, num of items to skip(처음 n개): Long
+  * parameter case2 : time based skip, 처음 n 시간 단위 동안 emit될 item들을 skip
+    * time: Long => n 시간 동안
+    * unit: TimeUnit => 시간 단위 결정
+  * 참고
+    * skipLast() : suppress 'the final n items' emitted by an Observable
+      * skip()과는 달리 마지막 n개를 skip
+    * skipWhile()
