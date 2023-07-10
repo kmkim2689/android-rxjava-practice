@@ -45,14 +45,14 @@
     * it's emitting each item in an iterable object, not an object!
     * emits the item in the sequence.
 
-* range => 파이썬 for문의 range와 유사함.
+* range() => 파이썬 for문의 range와 유사함.
   * fun range(start: Int, count: Int): Observable<Int>
   * start : the value of 'the first integer' in the 'sequence'
   * count : the number of sequential integers to generate
     * how many sequential you want to generate
   * return : an observable that emits a sequence of integer within a specified range
 
-* repeat
+* repeat()
   * range operator와 함께 사용
   * range(start, range).repeat(iteration)
   * range operator를 반복할 횟수를 정함
@@ -81,3 +81,17 @@
   * parameters
     * delay : the initial delay before emitting a single value => Long
     * unit : time units to use for delay => timeUnit
+    
+* create()
+  * for ***customizing*** our own implementation!!!
+  * Emitter를 이용하여 직접 아이템을 발행하고, 아이템 발행의 완료나 오류(Complete/Error)의 알림을 직접 설정
+  * parameter
+    * ObserveOnSubscribe(메소드)
+    * 메소드에서 어느 상황에서 어떠한 방식으로 onNext, onComplete, onError 콜백이 수행될지 직접 구현
+    * 원시 데이터를 이용하여 onNext의 발행이 어떻게 될지 정할 수 있음
+
+* filter()
+  * emit only those items from an Observable that pass a predicate test
+  * parameter : function to filter(넘겨주는 값 -> 넘겨주는 값을 이용한 조건(t/f))
+    * ex) Observable.filter { x -> x > 10 }
+    * 10이 넘는 숫자만 emit

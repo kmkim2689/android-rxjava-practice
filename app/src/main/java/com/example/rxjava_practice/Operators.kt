@@ -1,15 +1,25 @@
 package com.example.rxjava_practice
 
 import android.util.Log
+import com.example.rxjava_practice.data.User
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
+import java.lang.Exception
 import java.util.Arrays
 import java.util.concurrent.TimeUnit
 
 val mListNum = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 val arrayNum1 = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 val arrayNum2 = arrayOf(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+val mUserList = mutableListOf<User>(
+    User(1, "demo1", 15),
+    User(2, "demo2", 18),
+    User(3, "demo3", 20),
+    User(4, "demo4", 21),
+    User(5, "demo5", 23),
+    User(6, "demo6", 22)
+)
 
 fun fromOperator() {
     val observable = Observable.fromArray(arrayNum1, arrayNum2)
@@ -90,4 +100,29 @@ fun intervalOperator(): Observable<Long> {
 fun timerOperator(): Observable<Long> {
     // 5초 뒤 value를 하나 반환하고, complete
     return Observable.timer(5, TimeUnit.SECONDS)
+}
+
+// createOperator()가 return하는 Observable의 type은 정하기 나름...
+fun createOperator(): Observable<Int> {
+    // ObserveOnSubscribe 매개변수
+    // 구현부에서 작동할 콜백에 대한 자세한 구현을 정한다. 특히 onNext와 onError의 매개변수를 정함으로써 customizing이 가능해진다.
+    return Observable.create { emitter ->
+        try {
+            for (i in mListNum) {
+                emitter.onNext(i * 5)
+            }
+            // 모든 데이터가 emit된 뒤 complete로 가게 하려면 꼭 이 코드를 작성해야 한다.
+            // 이렇게 해야 실제 구현하는 부분에서 onComplete 콜백이 동작한다.
+            emitter.onComplete()
+
+        } catch(e: Exception) {
+            emitter.onError(e)
+        }
+    }
+}
+
+fun filterOperator(): Observable<User> {
+    // 일단 mutableList(sequence)에 있는 모든 데이터들을 순회해야 하므로 fromIterable() 메소드 사용
+    // pretend the case getting a list of users from the api
+    return Observable.fromIterable(mUserList)
 }
