@@ -147,12 +147,26 @@ class MainActivity : AppCompatActivity() {
             )*/
 
         // 사용되는 operator의 순서에 따라 emit되는 아이템의 개수와 순서가 달라질 수 있음에 유의
-        skipOperator()
-//            .skipLast(2)
-            // .skip(2)
-            // 첫 2개 스킵하고, 그 이후의 아이템 중에서 중복되는 것 제거하고 싶으면 함께 다른 operator 사용 가능
-            // .distinct()
-            .skip(2, TimeUnit.MILLISECONDS)
+        /*        skipOperator()
+        //            .skipLast(2)
+                    // .skip(2)
+                    // 첫 2개 스킵하고, 그 이후의 아이템 중에서 중복되는 것 제거하고 싶으면 함께 다른 operator 사용 가능
+                    // .distinct()
+                    .skip(2, TimeUnit.MILLISECONDS)
+                    .subscribe(
+                        {
+                            Log.d(TAG, "onNext, $it")
+                        },
+                        {
+                            Log.d(TAG, "onError, $it")
+                        },
+                        {
+                            Log.d(TAG, "onComplete")
+                        }
+                    )*/
+
+        bufferOperator()
+            .buffer(3)
             .subscribe(
                 {
                     Log.d(TAG, "onNext, $it")
@@ -173,12 +187,9 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, User(id=3, name=demo3, age=20)
-    onNext, User(id=4, name=demo4, age=21)
-    onNext, User(id=5, name=demo5, age=23)
-    onNext, User(id=6, name=demo6, age=23)
-    onNext, User(id=7, name=demo7, age=22)
-    onNext, User(id=8, name=demo8, age=22)
+    onNext, [User(id=1, name=demo1, age=15), User(id=2, name=demo2, age=18), User(id=3, name=demo3, age=20)]
+    onNext, [User(id=4, name=demo4, age=21), User(id=5, name=demo5, age=23), User(id=6, name=demo6, age=23)]
+    onNext, [User(id=7, name=demo7, age=22), User(id=8, name=demo8, age=22), User(id=8, name=demo8, age=22)]
     onComplete
      */
 }
