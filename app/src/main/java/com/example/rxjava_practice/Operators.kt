@@ -18,7 +18,10 @@ val mUserList = mutableListOf<User>(
     User(3, "demo3", 20),
     User(4, "demo4", 21),
     User(5, "demo5", 23),
-    User(6, "demo6", 22)
+    User(6, "demo6", 23),
+    User(7, "demo7", 22),
+    User(8, "demo8", 23),
+    User(8, "demo8", 23)
 )
 val mUserEmptyList = emptyList<User>()
 
@@ -129,5 +132,21 @@ fun filterOperator(): Observable<User> {
 }
 
 fun lastOperator(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
+
+fun distinctOperator(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
+
+fun skipOperator(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
+
+fun bufferOperator(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
+
+fun mapOperator(): Observable<User> {
     return Observable.fromIterable(mUserList)
 }
