@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.example.rxjava_practice.data.User
+import com.example.rxjava_practice.data.UserProfile
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
@@ -165,8 +166,48 @@ class MainActivity : AppCompatActivity() {
                         }
                     )*/
 
-        bufferOperator()
-            .buffer(3)
+        /*        bufferOperator()
+                    .buffer(3)
+                    .subscribe(
+                        {
+                            Log.d(TAG, "onNext, $it")
+                        },
+                        {
+                            Log.d(TAG, "onError, $it")
+                        },
+                        {
+                            Log.d(TAG, "onComplete")
+                        }
+                    )*/
+
+        // 단순히 데이터를 변경하는 용도로 map을 이용한 경우
+        mapOperator()
+            .map {
+                it.age * 2
+            }
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )
+
+        // Object의 타입을 바꾸고자 할 때... User -> UserProfile
+        mapOperator()
+            .map {
+                // User -> UserProfile
+                UserProfile(
+                    it.id,
+                    it.name,
+                    it.age,
+                    "https://test.com/${it.id}"
+                )
+            }
             .subscribe(
                 {
                     Log.d(TAG, "onNext, $it")
@@ -187,9 +228,29 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, [User(id=1, name=demo1, age=15), User(id=2, name=demo2, age=18), User(id=3, name=demo3, age=20)]
-    onNext, [User(id=4, name=demo4, age=21), User(id=5, name=demo5, age=23), User(id=6, name=demo6, age=23)]
-    onNext, [User(id=7, name=demo7, age=22), User(id=8, name=demo8, age=22), User(id=8, name=demo8, age=22)]
+    onNext, 30
+    onNext, 36
+    onNext, 40
+    onNext, 42
+    onNext, 46
+    onNext, 46
+    onNext, 44
+    onNext, 46
+    onNext, 46
     onComplete
      */
+
+    /*
+    Log 결과
+    onNext, UserProfile(id=1, name=demo1, age=15, image=https://test.com/1)
+    onNext, UserProfile(id=2, name=demo2, age=18, image=https://test.com/2)
+    onNext, UserProfile(id=3, name=demo3, age=20, image=https://test.com/3)
+    onNext, UserProfile(id=4, name=demo4, age=21, image=https://test.com/4)
+    onNext, UserProfile(id=5, name=demo5, age=23, image=https://test.com/5)
+    onNext, UserProfile(id=6, name=demo6, age=23, image=https://test.com/6)
+    onNext, UserProfile(id=7, name=demo7, age=22, image=https://test.com/7)
+    onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
+    onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
+    onComplete
+    */
 }

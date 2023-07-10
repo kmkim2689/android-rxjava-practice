@@ -82,7 +82,7 @@
     * delay : the initial delay before emitting a single value => Long
     * unit : time units to use for delay => timeUnit
     
-* create()
+* create() ***
   * for ***customizing*** our own implementation!!!
   * Emitter를 이용하여 직접 아이템을 발행하고, 아이템 발행의 완료나 오류(Complete/Error)의 알림을 직접 설정
   * parameter
@@ -92,7 +92,7 @@
 
 ### 2. Filtering Observables
 
-* filter()
+* filter() ***
   * emit only those items from an Observable that pass a predicate test
   * parameter : function to filter(넘겨주는 값 -> 넘겨주는 값을 이용한 조건(t/f))
     * ex) Observable.filter { x -> x > 10 }
@@ -143,7 +143,7 @@
       * skip()과는 달리 마지막 n개를 skip
     * skipWhile()
     
-### 3. Filtering Observables
+### 3. Transforming Observables
 
 * buffer()
   * Observable로부터 emit되는 아이템 하나하나를 그대로 발행하지 않고,
@@ -154,3 +154,12 @@
     * 여기서 bundle의 자료형은 순회 가능한 자료형이어야 함. mutable여부와는 상관 없음
       * (mutable)List
     * 즉 같은 자료형 여러 개로 쪼개진다는 의미
+    
+* map() ***
+  * 'transform' the items emitted by an Observable by 'applying a function to each item'
+  * js의 map와 같은 기능이라고 볼 수 있음.
+  * parameter : 넘겨 받은 값을 변형하는 함수
+  * 예를 들어, map { x -> x * 10 }이 적용된다면, 각 값에 10이 곱해진 값이 emit될 것이다.
+    * 1, 2, 3 -> 10, 20, 30
+  * 단순히 기존의 값을 변경할 뿐만 아니라, 아예 새로운 Object로 변형도 가능
+    * 데이터 클래스 종류 변경 등...
