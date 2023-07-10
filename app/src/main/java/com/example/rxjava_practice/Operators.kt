@@ -20,6 +20,7 @@ val mUserList = mutableListOf<User>(
     User(5, "demo5", 23),
     User(6, "demo6", 22)
 )
+val mUserEmptyList = emptyList<User>()
 
 fun fromOperator() {
     val observable = Observable.fromArray(arrayNum1, arrayNum2)
@@ -124,5 +125,9 @@ fun createOperator(): Observable<Int> {
 fun filterOperator(): Observable<User> {
     // 일단 mutableList(sequence)에 있는 모든 데이터들을 순회해야 하므로 fromIterable() 메소드 사용
     // pretend the case getting a list of users from the api
+    return Observable.fromIterable(mUserList)
+}
+
+fun lastOperator(): Observable<User> {
     return Observable.fromIterable(mUserList)
 }
