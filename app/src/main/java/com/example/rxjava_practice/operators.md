@@ -89,3 +89,9 @@
     * ObserveOnSubscribe(메소드)
     * 메소드에서 어느 상황에서 어떠한 방식으로 onNext, onComplete, onError 콜백이 수행될지 직접 구현
     * 원시 데이터를 이용하여 onNext의 발행이 어떻게 될지 정할 수 있음
+
+* filter()
+  * emit only those items from an Observable that pass a predicate test
+  * parameter : function to filter(넘겨주는 값 -> 넘겨주는 값을 이용한 조건(t/f))
+    * ex) Observable.filter { x -> x > 10 }
+    * 10이 넘는 숫자만 emit

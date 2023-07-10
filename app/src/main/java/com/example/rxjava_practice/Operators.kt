@@ -1,6 +1,7 @@
 package com.example.rxjava_practice
 
 import android.util.Log
+import com.example.rxjava_practice.data.User
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
@@ -11,6 +12,14 @@ import java.util.concurrent.TimeUnit
 val mListNum = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 val arrayNum1 = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 val arrayNum2 = arrayOf(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+val mUserList = mutableListOf<User>(
+    User(1, "demo1", 15),
+    User(2, "demo2", 18),
+    User(3, "demo3", 20),
+    User(4, "demo4", 21),
+    User(5, "demo5", 23),
+    User(6, "demo6", 22)
+)
 
 fun fromOperator() {
     val observable = Observable.fromArray(arrayNum1, arrayNum2)
@@ -110,4 +119,10 @@ fun createOperator(): Observable<Int> {
             emitter.onError(e)
         }
     }
+}
+
+fun filterOperator(): Observable<User> {
+    // 일단 mutableList(sequence)에 있는 모든 데이터들을 순회해야 하므로 fromIterable() 메소드 사용
+    // pretend the case getting a list of users from the api
+    return Observable.fromIterable(mUserList)
 }
