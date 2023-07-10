@@ -1,5 +1,3 @@
-# android-rxjava-practice
-
 ### Operators By Category
 
 * references
@@ -84,7 +82,7 @@
     * delay : the initial delay before emitting a single value => Long
     * unit : time units to use for delay => timeUnit
     
-* create()
+* create() ***
   * for ***customizing*** our own implementation!!!
   * Emitter를 이용하여 직접 아이템을 발행하고, 아이템 발행의 완료나 오류(Complete/Error)의 알림을 직접 설정
   * parameter
@@ -92,7 +90,9 @@
     * 메소드에서 어느 상황에서 어떠한 방식으로 onNext, onComplete, onError 콜백이 수행될지 직접 구현
     * 원시 데이터를 이용하여 onNext의 발행이 어떻게 될지 정할 수 있음
 
-* filter()
+### 2. Filtering Observables
+
+* filter() ***
   * emit only those items from an Observable that pass a predicate test
   * parameter : function to filter(넘겨주는 값 -> 넘겨주는 값을 이용한 조건(t/f))
     * ex) Observable.filter { x -> x > 10 }
@@ -120,3 +120,46 @@
   * 참고2 : lastOnError()
     * last()의 기본적 기능 +
     * emit할 것이 없는 경우, onFailure 콜백을 호출한다.
+    
+* distinct()
+  * suppress 'duplicate' items by an observable
+  * Observable에서 아이템들이 발행되는 동안 이미 발행된 아이템이라면 해당 아이템을 발행하지 않음. 
+  * 이름 그대로, distinct item만 발행
+  * 예를 들어, observable에서 1, 2, 2, 1, 3 순서대로 발행이 이뤄진다면, distinct()를 거친다면 실질적으로 발행되는 것들은 1, 2, 3뿐이다.
+  * parameter : ketSelector 함수
+    * 예를 들어, 데이터 클래스의 어떤 항목이 같은 것을 걸러낼 것인지 함수로 명시
+    * 아무것도 넘겨주지 않으면, 완전히 일치하는 것을 걸러냄.
+
+* skip()
+  * suppress 'the first n(defined number of...) items' emitted by an observable
+  * 처음 n개 item을 skip하고 발행
+  * 예를 들어, observable에서 1, 2, 3, 4를 발행하는데 skip(2)를 적용한다면, 3, 4만 발행
+  * parameter case1 : count based skip, num of items to skip(처음 n개): Long
+  * parameter case2 : time based skip, 처음 n 시간 단위 동안 emit될 item들을 skip
+    * time: Long => n 시간 동안
+    * unit: TimeUnit => 시간 단위 결정
+  * 참고
+    * skipLast() : suppress 'the final n items' emitted by an Observable
+      * skip()과는 달리 마지막 n개를 skip
+    * skipWhile()
+    
+### 3. Transforming Observables
+
+* buffer()
+  * Observable로부터 emit되는 아이템 하나하나를 그대로 발행하지 않고,
+  * 정해진 개수의 아이템으로 이뤄진 'Bundle'단위로 발행
+  * 즉 한 번 발행 시 여러 아이템으로 이뤄진 'Bundle' 단위로 이뤄진다는 것
+  * parameter
+    * count: Int => n개의 아이템으로 이뤄진 bundle로 만들어 발행하겠다
+    * 여기서 bundle의 자료형은 순회 가능한 자료형이어야 함. mutable여부와는 상관 없음
+      * (mutable)List
+    * 즉 같은 자료형 여러 개로 쪼개진다는 의미
+    
+* map() ***
+  * 'transform' the items emitted by an Observable by 'applying a function to each item'
+  * js의 map와 같은 기능이라고 볼 수 있음.
+  * parameter : 넘겨 받은 값을 변형하는 함수
+  * 예를 들어, map { x -> x * 10 }이 적용된다면, 각 값에 10이 곱해진 값이 emit될 것이다.
+    * 1, 2, 3 -> 10, 20, 30
+  * 단순히 기존의 값을 변경할 뿐만 아니라, 아예 새로운 Object로 변형도 가능
+    * 데이터 클래스 종류 변경 등...
