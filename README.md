@@ -1,3 +1,8 @@
+### Intro
+* This repository is being contributed due to my interest in RxJava.
+* I'm committing some basic things about RxJava while learning from online lectures, blogposts, ChatGPT, etc.
+* The information given below may not be correct, as my RxJava ability is not that good yet...
+
 ### Operators By Category
 
 * references
