@@ -95,3 +95,26 @@
   * parameter : function to filter(넘겨주는 값 -> 넘겨주는 값을 이용한 조건(t/f))
     * ex) Observable.filter { x -> x > 10 }
     * 10이 넘는 숫자만 emit
+    
+* last()
+  * emits 'only' the 'last' item emitted by an observable
+  * or the last item that meets some condition => can add some conditions
+  * last item that has been emitted by an observable
+  * parameter
+    * defaultItem : the default item to emit 'if the current Observable is ***empty***'
+  * last에서 observer의 이벤트 콜백은 onSuccess와 onError 두 가지임.
+    * 이유 : last()의 return type은 Observable이 아닌 ***Single***이기 때문이다.
+    * 이것은 last가 오직 하나의 데이터만 emit하는 특성에 기인한다고 볼 수 있음.
+    * Observable vs Single
+      * 데이터 방출 개수: Observable은 0개 이상의 데이터 아이템을 방출할 수 있지만, Single은 오직 1개의 데이터 아이템 또는 에러만을 방출합니다. 즉, Single은 데이터 스트림의 종료 시점을 명확하게 정의할 수 있습니다. 
+      * 구독자의 처리 방식: Observable은 데이터 스트림을 구독하는 구독자에게 onNext, onError, onComplete와 같은 세 가지 이벤트를 통해 데이터를 처리할 수 있습니다. 반면에 Single은 구독자에게 onSuccess 또는 onError 이벤트 중 하나만을 전달합니다. 따라서 Single은 성공적인 결과 또는 에러 결과만을 처리하는 경우에 유용합니다. 
+      * 에러 처리: Observable은 여러 개의 에러 이벤트를 방출할 수 있습니다. 예를 들어 네트워크 호출 중 여러 개의 예외가 발생할 수 있습니다. 반면에 Single은 오직 단 하나의 결과나 에러만을 방출하므로, 예외가 발생할 경우 onError 이벤트를 통해 처리됩니다. 
+      * 편의성: Single은 데이터 아이템이 한 개 뿐이라는 제한을 가지고 있기 때문에, 데이터 아이템을 처리하는데 간편함을 제공합니다. 단일 결과를 처리하고자 할 때 Single은 적합한 선택일 수 있습니다. Observable은 여러 개의 데이터 아이템을 처리할 수 있기 때문에 더 다양한 상황에 적합하게 사용될 수 있습니다. 
+      * 이러한 차이점들을 고려하여 Observable과 Single 중에서 적합한 타입을 선택할 수 있습니다. 데이터 스트림의 특성과 요구사항에 맞게 올바른 타입을 선택하여 사용하면 RxJava를 보다 효과적으로 활용할 수 있습니다.
+  * 참고1 : lastElement()
+    * last()의 기본적 기능 +
+    * 기본값을 넘겨주지 않는다.
+    * emit할 것이 없다면, ***아무것도 출력하지 않는다.***
+  * 참고2 : lastOnError()
+    * last()의 기본적 기능 +
+    * emit할 것이 없는 경우, onFailure 콜백을 호출한다.
