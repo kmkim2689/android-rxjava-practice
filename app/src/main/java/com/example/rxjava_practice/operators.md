@@ -118,3 +118,12 @@
   * 참고2 : lastOnError()
     * last()의 기본적 기능 +
     * emit할 것이 없는 경우, onFailure 콜백을 호출한다.
+    
+* distinct()
+  * suppress 'duplicate' items by an observable
+  * Observable에서 아이템들이 발행되는 동안 이미 발행된 아이템이라면 해당 아이템을 발행하지 않음. 
+  * 이름 그대로, distinct item만 발행
+  * 예를 들어, observable에서 1, 2, 2, 1, 3 순서대로 발행이 이뤄진다면, distinct()를 거친다면 실질적으로 발행되는 것들은 1, 2, 3뿐이다.
+  * parameter : ketSelector 함수
+    * 예를 들어, 데이터 클래스의 어떤 항목이 같은 것을 걸러낼 것인지 함수로 명시
+    * 아무것도 넘겨주지 않으면, 완전히 일치하는 것을 걸러냄.
