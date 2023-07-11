@@ -194,3 +194,10 @@
     **flatMap은 '각' 문자열을 Observable로 '변환한 후'에, 이들을 '병합'하여 하나의 Observable로 만들어줍니다.** 따라서 resultObservable은 변환된 단어들을 포함하는 하나의 Observable입니다.
     
     마지막으로, subscribe를 통해 결과 Observable을 구독하고 변환된 단어를 출력합니다.
+
+* groupBy()
+  * divide an Observable into a **set** of Observables
+  * each set, emit a different subset of items from the original Observable
+  
+* merge()
+  * 

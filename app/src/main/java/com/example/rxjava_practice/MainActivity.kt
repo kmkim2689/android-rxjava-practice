@@ -220,7 +220,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     )*/
 
-        flatMapOperator()
+        /*flatMapOperator()
             .flatMap {
                 // observable(Observable<User>) -> (an)other observable(s) (Observable<UserProfile>)
                 // in flatMap, should return observable(s), not other type of objects.
@@ -237,10 +237,10 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "onComplete")
                 }
-            )
+            )*/
 
-        // 같은 작업을 하는 함수(flatmap과 map을 함께 이용)
-        flatMapOperator2()
+        // 같은 작업을 하는 함수(flatmap)
+        /*flatMapOperator2()
             .flatMap {
                 // get the list of Users and flatten!
                 // User 데이터를 하나하나 순회하고
@@ -262,6 +262,69 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "onComplete")
                 }
+            )*/
+
+        /*        groupByOperator()
+                    .groupBy {
+                        // in groupBy, add some group(s) to the particular User item!
+                        // group by the age of users
+                        // 여기서 key가 어떻게 될 지 결정되는 것. 즉 여기서는 나이가 key가 됨
+                        it.age
+                    }
+                    .filter {
+                        // 23세인 사람만 가져오고 싶은 경우
+                        it.key == 23
+                    }
+                    .subscribe(
+                        {
+                            // onNext : GroupedObservable<Int, User> 얻어옴.
+                            // 여기서 Int값이 key에 해당되고, User가 value에 해당
+                            // flattened
+                            group ->
+                                group.subscribe(
+                                    // subscribe를 통해 얻어오는 값은 User, 즉 value에 해당
+                                    {
+                                        // onNext
+                                        Log.d(TAG, "onNext, key: ${group.key}, value: $it")
+                                    },
+                                    {
+                                        // onError
+                                        Log.d(TAG, "onError, $it")
+                                    }
+                                )
+                        },
+                        {
+                            Log.d(TAG, "onError, $it")
+                        },
+                        {
+                            Log.d(TAG, "onComplete")
+                        }
+                    )*/
+
+        // get lists by key using groupBy and flatMapSingle
+        groupByOperator()
+            .groupBy {
+                // in groupBy, add some group(s) to the particular User item!
+                // group by the age of users
+                // 여기서 key가 어떻게 될 지 결정되는 것. 즉 여기서는 나이가 key가 됨
+                it.age
+            }
+            // rxJava의 flatMapSingle() :
+            // Single type을 return해야한다. 따라서 flatMapSingle을 사용
+            .flatMapSingle { group ->
+                // rxJava의 toList() operator : 한 Observable에서 emit될 모든 아이템들을 모아 List인 Observable로 만들어 발행
+                group.toList()
+            }
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
             )
     }
 
@@ -272,15 +335,23 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, UserProfile(id=1, name=demo1, age=15, image=https://test.com/1)
-    onNext, UserProfile(id=2, name=demo2, age=18, image=https://test.com/2)
-    onNext, UserProfile(id=3, name=demo3, age=20, image=https://test.com/3)
-    onNext, UserProfile(id=4, name=demo4, age=21, image=https://test.com/4)
-    onNext, UserProfile(id=5, name=demo5, age=23, image=https://test.com/5)
-    onNext, UserProfile(id=6, name=demo6, age=23, image=https://test.com/6)
-    onNext, UserProfile(id=7, name=demo7, age=22, image=https://test.com/7)
-    onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
-    onNext, UserProfile(id=9, name=demo9, age=23, image=https://test.com/9)
+    onNext, key: 15, value: User(id=1, name=demo1, age=15)
+    onNext, key: 18, value: User(id=2, name=demo2, age=18)
+    onNext, key: 15, value: User(id=3, name=demo3, age=15)
+    onNext, key: 21, value: User(id=4, name=demo4, age=21)
+    onNext, key: 23, value: User(id=5, name=demo5, age=23)
+    onNext, key: 23, value: User(id=6, name=demo6, age=23)
+    onNext, key: 21, value: User(id=7, name=demo7, age=21)
+    onNext, key: 22, value: User(id=8, name=demo8, age=22)
+    onComplete
+     */
+
+    /*
+    onNext, [User(id=2, name=demo2, age=18)]
+    onNext, [User(id=4, name=demo4, age=21), User(id=7, name=demo7, age=21)]
+    onNext, [User(id=8, name=demo8, age=22)]
+    onNext, [User(id=5, name=demo5, age=23), User(id=6, name=demo6, age=23)]
+    onNext, [User(id=1, name=demo1, age=15), User(id=3, name=demo3, age=15)]
     onComplete
      */
 }

@@ -16,13 +16,12 @@ val arrayNum2 = arrayOf(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
 val mUserList = mutableListOf<User>(
     User(1, "demo1", 15),
     User(2, "demo2", 18),
-    User(3, "demo3", 20),
+    User(3, "demo3", 15),
     User(4, "demo4", 21),
     User(5, "demo5", 23),
     User(6, "demo6", 23),
-    User(7, "demo7", 22),
-    User(8, "demo8", 23),
-    User(9, "demo9", 23)
+    User(7, "demo7", 21),
+    User(8, "demo8", 22)
 )
 val mUserEmptyList = emptyList<User>()
 val mUserProfileList = mutableListOf<UserProfile>(
@@ -178,4 +177,9 @@ fun getUserProfile(id: Long): Observable<UserProfile> {
 fun flatMapOperator2(): Observable<List<User>> {
     return Observable.just(mUserList)
 }
+
+fun groupByOperator(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
+
 
