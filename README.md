@@ -1,8 +1,3 @@
-### Intro
-* This repository is being contributed due to my interest in RxJava.
-* I'm committing some basic things about RxJava while learning from online lectures, blogposts, ChatGPT, etc.
-* The information given below may not be correct, as my RxJava ability is not that good yet...
-
 ### Operators By Category
 
 * references
@@ -161,6 +156,7 @@
     * 즉 같은 자료형 여러 개로 쪼개진다는 의미
     
 * map() ***
+  * 일대일 함수
   * 'transform' the items emitted by an Observable by 'applying a function to each item'
   * js의 map와 같은 기능이라고 볼 수 있음.
   * parameter : 넘겨 받은 값을 변형하는 함수
@@ -168,3 +164,75 @@
     * 1, 2, 3 -> 10, 20, 30
   * 단순히 기존의 값을 변경할 뿐만 아니라, 아예 새로운 Object로 변형도 가능
     * 데이터 클래스 종류 변경 등...
+    
+* flatMap()
+  * 일대다 혹은 일대일의 Observable 함수
+  * transform the items emitted by an Observable into other Observable(s) (one or more),
+  * then 'flatten' the emissions from those into a 'single' Observable.=> 최종적으로는 1개의 Observable
+  * flatMap() always returns another observable
+    * 문자열로 된 리스트를 가지고 있고 각 문자열을 단어로 분할하고 싶다고 가정
+    * 각 단어를 대문자로 변환하여 최종적으로 변환된 단어들을 포함하는 리스트를 얻고자 함
+
+      fun main() {
+        val stringList = listOf("Hello World", "RxJava is awesome")
+
+        val resultObservable = Observable.fromIterable(stringList)
+          .flatMap { sentence ->
+             Observable.fromIterable(sentence.split(" "))
+                  .map { word -> word.toUpperCase() }
+          }
+
+         resultObservable.subscribe { word ->
+            println(word)
+         }
+      }
+    
+    위의 코드에서, 우리는 stringList라는 문자열 리스트를 가지고 시작합니다. Observable.fromIterable을 사용하여 이를 Observable로 변환합니다. 
+    그런 다음 flatMap 연산자를 사용하여 각 문자열을 단어로 분할하고, 각 단어를 대문자로 변환하는 작업을 수행하는 Observable로 변환합니다. 
+    이 작업은 flatMap 블록 내부의 Observable.fromIterable과 map을 통해 이루어집니다.
+  
+    **flatMap은 '각' 문자열을 Observable로 '변환한 후'에, 이들을 '병합'하여 하나의 Observable로 만들어줍니다.** 따라서 resultObservable은 변환된 단어들을 포함하는 하나의 Observable입니다.
+    
+    마지막으로, subscribe를 통해 결과 Observable을 구독하고 변환된 단어를 출력합니다.
+
+* groupBy()
+  * divide an Observable into a **set** of Observables
+  * each set, emit a different subset of items from the original Observable
+  * parameter : 정렬 기준 -> 이것은 곧 key를 나타내는 값이 됨
+  
+### 4. Combining Observables
+
+* merge()
+  * combine multiple observables into one by '**merging emissions**'.
+  * 각각 다른 타이밍에 다른 아이템을 발행되는 2개의 Observable들을 하나의 Observable로 합침
+  * parameter
+    * 합치고자 하는 Observables 나열
+    
+* concat()
+  * emit the emissions from two or more Observables without interleaving them
+  * 들어간 Observable 순서에 따른 발행.
+    * merge()의 특징이 바로 합쳐진 Observable들의 발행에 있어 interleaving이 이뤄짐
+    * 즉, merge 함수에 들어간 순서에 따른 발행이 보장되지 않는다는 것이다.
+  * concat()에서는 끼어들기 없음. 즉 merge와는 달리 
+  * 앞의 Observable의 발행이 끝나고 나서야 다음 Observable의 발행이 시작됨.
+  * merge vs concat 예시
+    * Observable 1 : 1 -- 1초 뒤 -- 2 -- 2초 뒤 -- 3 -- end
+    * Observable 2 : 2 -- 0.5초 뒤 -- 2 -- end
+    * merge()인 경우, 순서 보장 못함.
+    * concat()인 경우, 1 -- 1초 뒤 -- 2 -- 2초 뒤 -- 3 -- end -- 2 -- 0.5초 뒤 -- 2
+  * 참고 : Observable변수.concatWith(다른 Observable 변수)
+    * 두 observable를 concat하는 다른 방법
+    
+* startWith()
+  * parameter에 특정 값을 넣으면, 그 값이 발행되고 나서야 Observable의 item에 대한 발행이 시작됨
+  * Observable변수명.startWith(값 혹은 다른 Observable 혹은 Single)
+  
+* zip()
+  * 여러 개의 observable에서 발행되는 아이템을 짝지어 특정 함수처리하여 새로운 아이템을 발행할 수 있도록 하는 operator
+  * 매개변수
+    * zip할 Observer들(최대 9개), zip에 이용할 함수인 zipper(BiFunction)
+  * 만약 두 Observable에서 발행되는 아이템의 개수가 다르다면, 적은 쪽의 개수만큼만 발행된다.
+  * ex) 
+    * observable 1 : 1  2  3  4  5
+    * observable 2 : A  B  C  D
+    * result : 1A  2B  3C  4D
