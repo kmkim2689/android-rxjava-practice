@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import com.example.rxjava_practice.data.User
 import com.example.rxjava_practice.data.UserProfile
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -402,7 +404,57 @@ class MainActivity : AppCompatActivity() {
 
 //        createMaybeObservable().subscribe(maybeObserver())
 
-        createCompletableObservable().subscribe(completableObserver())
+//        createCompletableObservable().subscribe(completableObserver())
+
+        /*createFlowableObservable()
+
+            // observer가 감당 못하면 그 이후로 오는 것들은 떨굼
+            // 1부터 10까지
+            // .onBackpressureDrop()
+            // observer가 감당 못하면 가장 마지막 것들만 발행
+            // 1부터 10까지 담겨 꽉 찬 상태에서, 가장 마지막 값인 100만 출력
+            // .onBackpressureLatest()
+            // buffer : subscriber가 감당 가능할 때 사용하기 위해 모두 담아놓음.
+            .onBackpressureBuffer()
+            // 버퍼 사이즈는 10으로 제한
+            .observeOn(Schedulers.io(), false, 10)
+            .subscribe(
+                {
+                    // onNext 람다식
+                    // 1부터 10까지만 출력됨!
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    // onError 람다식
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    // onComplete 람다식
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        // convert observable into flowable
+        createFlowableObservable2()
+            // error 혹은 missing으로 설정해놓았는데, 버퍼 사이즈가 10이라 부족 -> 예외 발생...
+//            .toFlowable(BackpressureStrategy.ERROR)
+            .toFlowable(BackpressureStrategy.DROP)
+            .observeOn(Schedulers.io(), false, 10)
+            .subscribe(
+                {
+                    // onNext 람다식
+                    // 1부터 10까지만 출력됨!
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    // onError 람다식
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    // onComplete 람다식
+                    Log.d(TAG, "onComplete")
+                }
+            )
 
     }
 
@@ -413,8 +465,16 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onSubscribe
-    latitude: 100, longitude: 1
+    onNext, 1
+    onNext, 2
+    onNext, 3
+    onNext, 4
+    onNext, 5
+    onNext, 6
+    onNext, 7
+    onNext, 8
+    onNext, 9
+    onNext, 10
     onComplete
      */
 

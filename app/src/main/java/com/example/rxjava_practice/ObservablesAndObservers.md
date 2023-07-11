@@ -59,6 +59,39 @@
         * onSubscribe
         * onComplete => 이것 호출 전에 필요한 작업들을 수행
         * onError => Exception 발생 시 호출
+
+    * Flowable <> Observer
+      * Flowable is **similar to Observable**
+      * but, what if the Observable is emitting too many values that cannot be received and consumed by the Observer?
+        * at that time, an error would be caused...
+        * in this case, the Observable needs to ***skip some values*** by strategy...
+          * to avoid an exception...
+        * For using this kind of strategy, the **Flowable** Observable can be used!
+          * handles the exception with a strategy
+          * the exception is called "**MissingBackPressureException**"
+          * the strategy is called "**BackPressureStrategy**"
       
+      * BackPressure Strategies
+        * BackPressure.DROP
+          * discard the events that cannot be consumed by the Observer.
+          * 못 받을 것들은 그냥 버림
+        * BackPressure.BUFFER
+          * the source will buffer all the events until the subscriber can consume them
+          * 당장 못 쓰지만, 모든 것들을 저장해놓음. 그리고 subscriber가 사용할 여유가 생기면 그 때 사용
+          * 버퍼할 기본 사이즈를 지정 가능(최소 1)
+        * BackPressure.LATEST
+          * force to the source to keep only the latest items
+          * to do that, source may need to overwrite some previous values
+          * 최신 아이템만 저장해놓음. 이전 값들은 덮어씀
+        * BackPressure.MISSING
+          * don't want any backpressure strategy
+          * 만약 어떠한 전략도 쓰지 않아야 할 상황이라면, MISSING을 넘겨주면 됨.
+        * BackPressure.ERROR
+          * if we don't expect any backpressure, this can be used...
+          * MISSING과 ERROR의 경우, 만약 Observer가 감당하지 못하면(데이터가 emit되는 속도를 따라가지 못하면) MissingBackpressureException 발생
+          
+      * the way to convert Observable into Flowable
+        * Observable변수명.toFlowable(strategy)
+          * strategy 자리에는 위의 strategies 중 하나를 넣으면 됨
 
 ---

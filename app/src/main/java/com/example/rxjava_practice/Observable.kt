@@ -5,6 +5,7 @@ import com.example.rxjava_practice.MainActivity.Companion.TAG
 import com.example.rxjava_practice.data.User
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.CompletableObserver
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
 import io.reactivex.rxjava3.core.Observable
@@ -197,4 +198,15 @@ fun completableObserver(): CompletableObserver {
 private fun getLocation() {
     Thread.sleep(2000)
     Log.d(TAG, "latitude: 100, longitude: 1")
+}
+
+fun createFlowableObservable(): Flowable<Int> {
+    // 100개 정도면, observer가 충분히 감당 가능함.
+    return Flowable.range(1, 100)
+}
+
+// how to change Observable into Flowable?
+fun createFlowableObservable2(): Observable<Int> {
+    // 100개 정도면, observer가 충분히 감당 가능함.
+    return Observable.range(1, 100)
 }
