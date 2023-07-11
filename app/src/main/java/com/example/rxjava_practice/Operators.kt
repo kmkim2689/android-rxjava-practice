@@ -198,3 +198,17 @@ fun mergeOperator(): Observable<Any> {
     // combine
     return Observable.merge(getUser(), getUserProfile())
 }
+
+fun getNums1(): Observable<Int> {
+    return Observable.range(1, 100)
+}
+
+fun getNums2(): Observable<Int> {
+    return Observable.range(1, 150)
+}
+
+// no interleaving each other
+fun concatOperator(): Observable<Int> {
+//    return Observable.concat(getNums1(), getNums2())
+    return getNums1().concatWith(getNums2())
+}

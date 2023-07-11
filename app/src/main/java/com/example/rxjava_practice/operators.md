@@ -198,9 +198,27 @@
 * groupBy()
   * divide an Observable into a **set** of Observables
   * each set, emit a different subset of items from the original Observable
+  * parameter : 정렬 기준 -> 이것은 곧 key를 나타내는 값이 됨
   
 * merge()
   * combine multiple observables into one by '**merging emissions**'.
   * 각각 다른 타이밍에 다른 아이템을 발행되는 2개의 Observable들을 하나의 Observable로 합침
-  
-  
+  * parameter
+    * 합치고자 하는 Observables 나열
+    
+* concat()
+  * emit the emissions from two or more Observables without interleaving them
+  * 들어간 Observable 순서에 따른 발행.
+    * merge()의 특징이 바로 합쳐진 Observable들의 발행에 있어 interleaving이 이뤄짐
+    * 즉, merge 함수에 들어간 순서에 따른 발행이 보장되지 않는다는 것이다.
+  * concat()에서는 끼어들기 없음. 즉 merge와는 달리 
+  * 앞의 Observable의 발행이 끝나고 나서야 다음 Observable의 발행이 시작됨.
+  * merge vs concat 예시
+    * Observable 1 : 1 -- 1초 뒤 -- 2 -- 2초 뒤 -- 3 -- end
+    * Observable 2 : 2 -- 0.5초 뒤 -- 2 -- end
+    * merge()인 경우, 1, 2 -- 0.5초 뒤 -- 2 -- 0.5초 뒤 -- 2 -- 2초 뒤 -- 3
+    * concat()인 경우, 1 -- 1초 뒤 -- 2 -- 2초 뒤 -- 3 -- end -- 2 -- 0.5초 뒤 -- 2
+  * 참고 : Observable변수.concatWith(다른 Observable 변수)
+    * 두 observable를 concat하는 다른 방법
+    
+* 
