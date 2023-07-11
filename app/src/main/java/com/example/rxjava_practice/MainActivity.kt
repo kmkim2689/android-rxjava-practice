@@ -366,7 +366,7 @@ class MainActivity : AppCompatActivity() {
                 }
             )*/
 
-        zipOperator2()
+        /*zipOperator2()
             .subscribe(
                 {
                     it.forEach {
@@ -380,7 +380,21 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "onComplete")
                 }
-            )
+            )*/
+
+        // createObservable().subscribe(observer())
+
+        createObservable().subscribe(
+            {
+                Log.d(TAG, "onNext, $it")
+            },
+            {
+                Log.d(TAG, "onError, $it")
+            },
+            {
+                Log.d(TAG, "onComplete")
+            }
+        )
     }
 
     // get location every min
@@ -390,13 +404,7 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, BlogDetail(id=1, userId=1, title=title1, content=content1, user=User(id=1, name=demo1, age=15))
-    onNext, BlogDetail(id=2, userId=1, title=title2, content=content2, user=User(id=1, name=demo1, age=15))
-    onNext, BlogDetail(id=3, userId=2, title=title3, content=content3, user=User(id=2, name=demo2, age=18))
-    onNext, BlogDetail(id=4, userId=2, title=title4, content=content4, user=User(id=2, name=demo2, age=18))
-    onNext, BlogDetail(id=5, userId=2, title=title5, content=content5, user=User(id=2, name=demo2, age=18))
-    onNext, BlogDetail(id=6, userId=3, title=title6, content=content6, user=User(id=3, name=demo3, age=15))
-    onComplete
+
      */
 
     /*

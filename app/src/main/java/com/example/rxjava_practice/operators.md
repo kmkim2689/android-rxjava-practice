@@ -1,4 +1,4 @@
-### Operators By Category
+## Operators By Category
 
 * references
     * https://reactivex.io/documentation/operators.html
