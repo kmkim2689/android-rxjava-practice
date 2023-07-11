@@ -3,6 +3,8 @@ package com.example.rxjava_practice
 import android.util.Log
 import com.example.rxjava_practice.MainActivity.Companion.TAG
 import com.example.rxjava_practice.data.User
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.MaybeObserver
 import io.reactivex.rxjava3.core.Observable
@@ -27,8 +29,6 @@ fun createObservable(): Observable<Int> {
         }
     }
 }
-
-
 
 fun observer(): Observer<Int> {
     return object : Observer<Int> {
@@ -159,4 +159,42 @@ fun maybeObserver(): MaybeObserver<List<User>> {
         }
 
     }
+}
+
+fun createCompletableObservable(): Completable {
+    return Completable.create { emitter ->
+        try {
+            if (!emitter.isDisposed) {
+                // 아무런 값도 emit하지 않기 때문에, onNext 혹은 onSuccess는 존재하지 않음.
+                // onComplete 전에 해야 할 모든 작업들을 수행한다.
+                getLocation()
+                emitter.onComplete()
+
+            }
+        } catch (e: Exception) {
+            emitter.onError(e)
+        }
+    }
+}
+
+fun completableObserver(): CompletableObserver {
+    return object : CompletableObserver {
+        override fun onSubscribe(d: Disposable) {
+            Log.d(TAG, "onSubscribe")
+        }
+
+        override fun onComplete() {
+            Log.d(TAG, "onComplete")
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d(TAG, "onError")
+        }
+
+    }
+}
+
+private fun getLocation() {
+    Thread.sleep(2000)
+    Log.d(TAG, "latitude: 100, longitude: 1")
 }

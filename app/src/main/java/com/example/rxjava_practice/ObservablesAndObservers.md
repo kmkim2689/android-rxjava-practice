@@ -51,6 +51,14 @@
       * 또한, onSubscribe와 onSuccess가 둘 다 존재
       * 아무런 아이템도 emit하지 않는다면, onSuccess는 호출되지 않는다.
         * singleObserver과 비교되는 점...
+        
+    * Completable <> CompletableObserver
+      * when to use
+        * when the observable has to ***do some tasks*** **without emitting a value**
+      * callbacks => item을 발행하지 않기 때문에, onNext와 onSuccess가 존재하지 않음.
+        * onSubscribe
+        * onComplete => 이것 호출 전에 필요한 작업들을 수행
+        * onError => Exception 발생 시 호출
       
 
 ---

@@ -400,7 +400,9 @@ class MainActivity : AppCompatActivity() {
 
 //        createSingleObservableUsers().subscribe(singleObserverUsers())
 
-        createMaybeObservable().subscribe(maybeObserver())
+//        createMaybeObservable().subscribe(maybeObserver())
+
+        createCompletableObservable().subscribe(completableObserver())
 
     }
 
@@ -412,14 +414,8 @@ class MainActivity : AppCompatActivity() {
     /*
     Log 결과
     onSubscribe
-    onSuccess, User(id=1, name=demo1, age=15)
-    onSuccess, User(id=2, name=demo2, age=18)
-    onSuccess, User(id=3, name=demo3, age=15)
-    onSuccess, User(id=4, name=demo4, age=21)
-    onSuccess, User(id=5, name=demo5, age=23)
-    onSuccess, User(id=6, name=demo6, age=23)
-    onSuccess, User(id=7, name=demo7, age=21)
-    onSuccess, User(id=8, name=demo8, age=22)
+    latitude: 100, longitude: 1
+    onComplete
      */
 
     /*
