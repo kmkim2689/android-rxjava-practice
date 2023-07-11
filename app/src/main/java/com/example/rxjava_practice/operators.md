@@ -200,4 +200,7 @@
   * each set, emit a different subset of items from the original Observable
   
 * merge()
-  * 
+  * combine multiple observables into one by '**merging emissions**'.
+  * 각각 다른 타이밍에 다른 아이템을 발행되는 2개의 Observable들을 하나의 Observable로 합침
+  
+  

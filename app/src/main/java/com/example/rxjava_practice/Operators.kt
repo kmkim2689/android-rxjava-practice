@@ -182,4 +182,19 @@ fun groupByOperator(): Observable<User> {
     return Observable.fromIterable(mUserList)
 }
 
+// Observable 1
+fun getUser(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
 
+// Observable 2
+fun getUserProfile(): Observable<UserProfile> {
+    return Observable.fromIterable(mUserProfileList)
+}
+
+// => want to combine these two... by using merge()
+
+fun mergeOperator(): Observable<Any> {
+    // combine
+    return Observable.merge(getUser(), getUserProfile())
+}
