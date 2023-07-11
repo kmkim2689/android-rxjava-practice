@@ -200,6 +200,8 @@
   * each set, emit a different subset of items from the original Observable
   * parameter : 정렬 기준 -> 이것은 곧 key를 나타내는 값이 됨
   
+### 4. Combining Observables
+
 * merge()
   * combine multiple observables into one by '**merging emissions**'.
   * 각각 다른 타이밍에 다른 아이템을 발행되는 2개의 Observable들을 하나의 Observable로 합침
@@ -216,9 +218,13 @@
   * merge vs concat 예시
     * Observable 1 : 1 -- 1초 뒤 -- 2 -- 2초 뒤 -- 3 -- end
     * Observable 2 : 2 -- 0.5초 뒤 -- 2 -- end
-    * merge()인 경우, 1, 2 -- 0.5초 뒤 -- 2 -- 0.5초 뒤 -- 2 -- 2초 뒤 -- 3
+    * merge()인 경우, 순서 보장 못함.
     * concat()인 경우, 1 -- 1초 뒤 -- 2 -- 2초 뒤 -- 3 -- end -- 2 -- 0.5초 뒤 -- 2
   * 참고 : Observable변수.concatWith(다른 Observable 변수)
     * 두 observable를 concat하는 다른 방법
     
-* 
+* startWith()
+  * parameter에 특정 값을 넣으면, 그 값이 발행되고 나서야 Observable의 item에 대한 발행이 시작됨
+  * Observable변수명.startWith(값 혹은 다른 Observable 혹은 Single)
+  
+* zip()

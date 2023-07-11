@@ -5,6 +5,7 @@ import com.example.rxjava_practice.data.User
 import com.example.rxjava_practice.data.UserProfile
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.Disposable
 import java.lang.Exception
 import java.util.Arrays
@@ -211,4 +212,10 @@ fun getNums2(): Observable<Int> {
 fun concatOperator(): Observable<Int> {
 //    return Observable.concat(getNums1(), getNums2())
     return getNums1().concatWith(getNums2())
+}
+
+fun startWithOperator(): Observable<User> {
+    // concat와 같은 효과
+//    return getNums2().startWith(getNums1())
+    return getUser().startWith(Single.just(User(1, "km", 26)))
 }

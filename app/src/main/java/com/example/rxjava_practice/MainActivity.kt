@@ -340,7 +340,20 @@ class MainActivity : AppCompatActivity() {
                 }
             )*/
 
-        concatOperator()
+        /*concatOperator()
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        startWithOperator()
             .subscribe(
                 {
                     Log.d(TAG, "onNext, $it")
@@ -361,7 +374,16 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-
+    onNext, User(id=1, name=km, age=26)
+    onNext, User(id=1, name=demo1, age=15)
+    onNext, User(id=2, name=demo2, age=18)
+    onNext, User(id=3, name=demo3, age=15)
+    onNext, User(id=4, name=demo4, age=21)
+    onNext, User(id=5, name=demo5, age=23)
+    onNext, User(id=6, name=demo6, age=23)
+    onNext, User(id=7, name=demo7, age=21)
+    onNext, User(id=8, name=demo8, age=22)
+    onComplete
      */
 
     /*
