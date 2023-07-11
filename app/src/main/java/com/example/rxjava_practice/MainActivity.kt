@@ -6,15 +6,21 @@ import android.os.Bundle
 import android.util.Log
 import com.example.rxjava_practice.data.User
 import com.example.rxjava_practice.data.UserProfile
+import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG = "MainActivity"
+        const val TAG2 = "MainActivity2"
     }
+
+    val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -366,7 +372,7 @@ class MainActivity : AppCompatActivity() {
                 }
             )*/
 
-        zipOperator2()
+        /*zipOperator2()
             .subscribe(
                 {
                     it.forEach {
@@ -380,7 +386,123 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "onComplete")
                 }
+            )*/
+
+        // createObservable().subscribe(observer())
+
+        /*createObservable().subscribe(
+            {
+                Log.d(TAG, "onNext, $it")
+            },
+            {
+                Log.d(TAG, "onError, $it")
+            },
+            {
+                Log.d(TAG, "onComplete")
+            }
+        )*/
+
+//        createSingleObservable().subscribe(singleObserver())
+
+//        createSingleObservableUsers().subscribe(singleObserverUsers())
+
+//        createMaybeObservable().subscribe(maybeObserver())
+
+//        createCompletableObservable().subscribe(completableObserver())
+
+        /*createFlowableObservable()
+
+            // observer가 감당 못하면 그 이후로 오는 것들은 떨굼
+            // 1부터 10까지
+            // .onBackpressureDrop()
+            // observer가 감당 못하면 가장 마지막 것들만 발행
+            // 1부터 10까지 담겨 꽉 찬 상태에서, 가장 마지막 값인 100만 출력
+            // .onBackpressureLatest()
+            // buffer : subscriber가 감당 가능할 때 사용하기 위해 모두 담아놓음.
+            .onBackpressureBuffer()
+            // 버퍼 사이즈는 10으로 제한
+            .observeOn(Schedulers.io(), false, 10)
+            .subscribe(
+                {
+                    // onNext 람다식
+                    // 1부터 10까지만 출력됨!
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    // onError 람다식
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    // onComplete 람다식
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        // convert observable into flowable
+        /*createFlowableObservable2()
+            // error 혹은 missing으로 설정해놓았는데, 버퍼 사이즈가 10이라 부족 -> 예외 발생...
+//            .toFlowable(BackpressureStrategy.ERROR)
+            .toFlowable(BackpressureStrategy.DROP)
+            .observeOn(Schedulers.io(), false, 10)
+            .subscribe(
+                {
+                    // onNext 람다식
+                    // 1부터 10까지만 출력됨!
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    // onError 람다식
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    // onComplete 람다식
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+//        createObservable()
+//            .subscribeOn(Schedulers.io())
+//            .subscribe(
+//                observer()
+//            )
+
+        // add된 2개의 구독은 비동기적으로 동시에 수행된다...
+        compositeDisposable.add(
+            createObservable()
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    {
+                        // onNext
+                        Log.d(TAG, "onNext, $it")
+                    },
+                    {
+                        // onError
+                        Log.d(TAG, "onError, $it")
+                    },
+                    {
+                        // onComplete
+                        Log.d(TAG, "onComplete")
+                    }
+                )
+        )
+
+        // 여러 개의 subscribe 추가 가능
+        compositeDisposable.add(
+            intervalOperator().subscribe(
+                {
+                    // onNext
+                    Log.d(TAG2, "onNext, $it")
+                },
+                {
+                    // onError
+                    Log.d(TAG2, "onError, $it")
+                },
+                {
+                    Log.d(TAG2, "onComplete")
+                }
             )
+        )
+
     }
 
     // get location every min
@@ -388,18 +510,38 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "latitude: 100, longitude: 1")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // 이러한 식으로 onDestroy에서 dispose해주지 않으면
+        // destroy되어도 계속 observing이 진행된다!!!
+        disposable.dispose()
+        Log.d(TAG, "onDestroy")
+    }
+
     /*
     Log 결과
-    onNext, BlogDetail(id=1, userId=1, title=title1, content=content1, user=User(id=1, name=demo1, age=15))
-    onNext, BlogDetail(id=2, userId=1, title=title2, content=content2, user=User(id=1, name=demo1, age=15))
-    onNext, BlogDetail(id=3, userId=2, title=title3, content=content3, user=User(id=2, name=demo2, age=18))
-    onNext, BlogDetail(id=4, userId=2, title=title4, content=content4, user=User(id=2, name=demo2, age=18))
-    onNext, BlogDetail(id=5, userId=2, title=title5, content=content5, user=User(id=2, name=demo2, age=18))
-    onNext, BlogDetail(id=6, userId=3, title=title6, content=content6, user=User(id=3, name=demo3, age=15))
+    onNext, 1
+    onNext, 2
+    onNext, 3
+    onNext, 4
+    onNext, 5
+    onNext, 6
+    onNext, 7
+    onNext, 8
+    onNext, 9
+    onNext, 10
     onComplete
      */
 
     /*
-
+    onSubscribe
+    onSuccess, User(id=1, name=demo1, age=15)
+    onSuccess, User(id=2, name=demo2, age=18)
+    onSuccess, User(id=3, name=demo3, age=15)
+    onSuccess, User(id=4, name=demo4, age=21)
+    onSuccess, User(id=5, name=demo5, age=23)
+    onSuccess, User(id=6, name=demo6, age=23)
+    onSuccess, User(id=7, name=demo7, age=21)
+    onSuccess, User(id=8, name=demo8, age=22)
      */
 }
