@@ -3,6 +3,8 @@ package com.example.rxjava_practice
 import android.util.Log
 import com.example.rxjava_practice.MainActivity.Companion.TAG
 import com.example.rxjava_practice.data.User
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.MaybeObserver
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.core.Single
@@ -120,6 +122,36 @@ fun singleObserverUsers(): SingleObserver<List<User>> {
         override fun onSuccess(t: List<User>) {
             // 이렇게 하면 리스트 전체가 출력되어버림.
             // Log.d(TAG, "onSuccess, $t")
+            t.forEach { user ->
+                // User 하나하나에 대한 처리가 필요하면 forEach 활용
+                Log.d(TAG, "onSuccess, $user")
+            }
+        }
+
+    }
+}
+
+fun createMaybeObservable(): Maybe<List<User>> {
+    // 만약 빈 리스트를 넘겨준다면, onSuccess는 호출되지 않는다!
+    return Maybe.just(mUserList)
+}
+
+fun maybeObserver(): MaybeObserver<List<User>> {
+    return object : MaybeObserver<List<User>> {
+        override fun onSubscribe(d: Disposable) {
+            Log.d(TAG, "onSubscribe")
+        }
+
+        override fun onError(e: Throwable) {
+            Log.d(TAG, "onError")
+        }
+
+        override fun onComplete() {
+            Log.d(TAG, "onComplete")
+        }
+
+        override fun onSuccess(t: List<User>) {
+            Log.d(TAG, "onSuccess, $t")
             t.forEach { user ->
                 // User 하나하나에 대한 처리가 필요하면 forEach 활용
                 Log.d(TAG, "onSuccess, $user")

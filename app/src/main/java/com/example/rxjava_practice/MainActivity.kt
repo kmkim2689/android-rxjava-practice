@@ -398,7 +398,10 @@ class MainActivity : AppCompatActivity() {
 
 //        createSingleObservable().subscribe(singleObserver())
 
-        createSingleObservableUsers().subscribe(singleObserverUsers())
+//        createSingleObservableUsers().subscribe(singleObserverUsers())
+
+        createMaybeObservable().subscribe(maybeObserver())
+
     }
 
     // get location every min
@@ -409,7 +412,14 @@ class MainActivity : AppCompatActivity() {
     /*
     Log 결과
     onSubscribe
-    onSuccess, 0
+    onSuccess, User(id=1, name=demo1, age=15)
+    onSuccess, User(id=2, name=demo2, age=18)
+    onSuccess, User(id=3, name=demo3, age=15)
+    onSuccess, User(id=4, name=demo4, age=21)
+    onSuccess, User(id=5, name=demo5, age=23)
+    onSuccess, User(id=6, name=demo6, age=23)
+    onSuccess, User(id=7, name=demo7, age=21)
+    onSuccess, User(id=8, name=demo8, age=22)
      */
 
     /*
