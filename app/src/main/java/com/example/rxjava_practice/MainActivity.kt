@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
                     )*/
 
         // 단순히 데이터를 변경하는 용도로 map을 이용한 경우
-        mapOperator()
+        /*mapOperator()
             .map {
                 it.age * 2
             }
@@ -195,18 +195,62 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "onComplete")
                 }
-            )
+            )*/
 
         // Object의 타입을 바꾸고자 할 때... User -> UserProfile
-        mapOperator()
-            .map {
-                // User -> UserProfile
-                UserProfile(
-                    it.id,
-                    it.name,
-                    it.age,
-                    "https://test.com/${it.id}"
-                )
+        /*        mapOperator()
+                    .map {
+                        // User -> UserProfile
+                        UserProfile(
+                            it.id,
+                            it.name,
+                            it.age,
+                            "https://test.com/${it.id}"
+                        )
+                    }
+                    .subscribe(
+                        {
+                            Log.d(TAG, "onNext, $it")
+                        },
+                        {
+                            Log.d(TAG, "onError, $it")
+                        },
+                        {
+                            Log.d(TAG, "onComplete")
+                        }
+                    )*/
+
+        flatMapOperator()
+            .flatMap {
+                // observable(Observable<User>) -> (an)other observable(s) (Observable<UserProfile>)
+                // in flatMap, should return observable(s), not other type of objects.
+                // return Observable<UserProfile>
+                getUserProfile(it.id)
+            }
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )
+
+        // 같은 작업을 하는 함수(flatmap과 map을 함께 이용)
+        flatMapOperator2()
+            .flatMap {
+                // get the list of Users and flatten!
+                // User 데이터를 하나하나 순회하고
+                Observable.fromIterable(it)
+                // 각 User 아이템들을 모아 하나의 Observable로 병합
+            }
+            .flatMap {
+                // User 데이터를 가져와 함수를 이용해 각 아이템을 UserProfile로 변환
+                getUserProfile(it.id)
+                // UserProfile 아이템들을 모아 하나의 Observable로 병합
             }
             .subscribe(
                 {
@@ -228,20 +272,6 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, 30
-    onNext, 36
-    onNext, 40
-    onNext, 42
-    onNext, 46
-    onNext, 46
-    onNext, 44
-    onNext, 46
-    onNext, 46
-    onComplete
-     */
-
-    /*
-    Log 결과
     onNext, UserProfile(id=1, name=demo1, age=15, image=https://test.com/1)
     onNext, UserProfile(id=2, name=demo2, age=18, image=https://test.com/2)
     onNext, UserProfile(id=3, name=demo3, age=20, image=https://test.com/3)
@@ -250,7 +280,7 @@ class MainActivity : AppCompatActivity() {
     onNext, UserProfile(id=6, name=demo6, age=23, image=https://test.com/6)
     onNext, UserProfile(id=7, name=demo7, age=22, image=https://test.com/7)
     onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
-    onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
+    onNext, UserProfile(id=9, name=demo9, age=23, image=https://test.com/9)
     onComplete
-    */
+     */
 }

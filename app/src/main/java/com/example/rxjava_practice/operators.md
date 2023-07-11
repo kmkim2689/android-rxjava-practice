@@ -156,6 +156,7 @@
     * 즉 같은 자료형 여러 개로 쪼개진다는 의미
     
 * map() ***
+  * 일대일 함수
   * 'transform' the items emitted by an Observable by 'applying a function to each item'
   * js의 map와 같은 기능이라고 볼 수 있음.
   * parameter : 넘겨 받은 값을 변형하는 함수
@@ -163,3 +164,33 @@
     * 1, 2, 3 -> 10, 20, 30
   * 단순히 기존의 값을 변경할 뿐만 아니라, 아예 새로운 Object로 변형도 가능
     * 데이터 클래스 종류 변경 등...
+    
+* flatMap()
+  * 일대다 혹은 일대일의 Observable 함수
+  * transform the items emitted by an Observable into other Observable(s) (one or more),
+  * then 'flatten' the emissions from those into a 'single' Observable.=> 최종적으로는 1개의 Observable
+  * flatMap() always returns another observable
+    * 문자열로 된 리스트를 가지고 있고 각 문자열을 단어로 분할하고 싶다고 가정
+    * 각 단어를 대문자로 변환하여 최종적으로 변환된 단어들을 포함하는 리스트를 얻고자 함
+
+      fun main() {
+        val stringList = listOf("Hello World", "RxJava is awesome")
+
+        val resultObservable = Observable.fromIterable(stringList)
+          .flatMap { sentence ->
+             Observable.fromIterable(sentence.split(" "))
+                  .map { word -> word.toUpperCase() }
+          }
+
+         resultObservable.subscribe { word ->
+            println(word)
+         }
+      }
+    
+    위의 코드에서, 우리는 stringList라는 문자열 리스트를 가지고 시작합니다. Observable.fromIterable을 사용하여 이를 Observable로 변환합니다. 
+    그런 다음 flatMap 연산자를 사용하여 각 문자열을 단어로 분할하고, 각 단어를 대문자로 변환하는 작업을 수행하는 Observable로 변환합니다. 
+    이 작업은 flatMap 블록 내부의 Observable.fromIterable과 map을 통해 이루어집니다.
+  
+    **flatMap은 '각' 문자열을 Observable로 '변환한 후'에, 이들을 '병합'하여 하나의 Observable로 만들어줍니다.** 따라서 resultObservable은 변환된 단어들을 포함하는 하나의 Observable입니다.
+    
+    마지막으로, subscribe를 통해 결과 Observable을 구독하고 변환된 단어를 출력합니다.

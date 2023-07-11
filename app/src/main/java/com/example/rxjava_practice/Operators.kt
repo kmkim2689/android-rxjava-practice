@@ -2,6 +2,7 @@ package com.example.rxjava_practice
 
 import android.util.Log
 import com.example.rxjava_practice.data.User
+import com.example.rxjava_practice.data.UserProfile
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
@@ -21,9 +22,20 @@ val mUserList = mutableListOf<User>(
     User(6, "demo6", 23),
     User(7, "demo7", 22),
     User(8, "demo8", 23),
-    User(8, "demo8", 23)
+    User(9, "demo9", 23)
 )
 val mUserEmptyList = emptyList<User>()
+val mUserProfileList = mutableListOf<UserProfile>(
+    UserProfile(1, "demo1", 15, "https://test.com/1"),
+    UserProfile(2, "demo2", 18, "https://test.com/2"),
+    UserProfile(3, "demo3", 20, "https://test.com/3"),
+    UserProfile(4, "demo4", 21, "https://test.com/4"),
+    UserProfile(5, "demo5", 23, "https://test.com/5"),
+    UserProfile(6, "demo6", 23, "https://test.com/6"),
+    UserProfile(7, "demo7", 22, "https://test.com/7"),
+    UserProfile(8, "demo8", 23, "https://test.com/8"),
+    UserProfile(9, "demo9", 23, "https://test.com/9")
+)
 
 fun fromOperator() {
     val observable = Observable.fromArray(arrayNum1, arrayNum2)
@@ -150,3 +162,20 @@ fun bufferOperator(): Observable<User> {
 fun mapOperator(): Observable<User> {
     return Observable.fromIterable(mUserList)
 }
+
+fun flatMapOperator(): Observable<User> {
+    return Observable.fromIterable(mUserList)
+}
+
+fun getUserProfile(id: Long): Observable<UserProfile> {
+    return Observable.fromIterable(mUserProfileList)
+        .filter {
+            // 넘겨받은 아이디값과 일치하는 값만 발행
+            it.id == id
+        }
+}
+
+fun flatMapOperator2(): Observable<List<User>> {
+    return Observable.just(mUserList)
+}
+
