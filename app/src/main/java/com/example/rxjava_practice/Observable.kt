@@ -15,12 +15,14 @@ import io.reactivex.rxjava3.core.SingleObserver
 import io.reactivex.rxjava3.disposables.Disposable
 import java.lang.Exception
 
+lateinit var disposable: Disposable
+
 // the basic observable
 fun createObservable(): Observable<Int> {
     return Observable.create { emitter ->
         try {
             if (!emitter.isDisposed) {
-                for (i in 0..100) {
+                for (i in 0..100000) {
                     emitter.onNext(i)
                 }
             }
@@ -34,6 +36,10 @@ fun createObservable(): Observable<Int> {
 fun observer(): Observer<Int> {
     return object : Observer<Int> {
         override fun onSubscribe(d: Disposable) {
+            d?.let {
+                disposable = d
+            }
+//            disposable = d
             Log.d(TAG, "onSubscribe")
         }
 
