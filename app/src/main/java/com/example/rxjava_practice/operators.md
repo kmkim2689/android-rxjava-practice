@@ -228,3 +228,11 @@
   * Observable변수명.startWith(값 혹은 다른 Observable 혹은 Single)
   
 * zip()
+  * 여러 개의 observable에서 발행되는 아이템을 짝지어 특정 함수처리하여 새로운 아이템을 발행할 수 있도록 하는 operator
+  * 매개변수
+    * zip할 Observer들(최대 9개), zip에 이용할 함수인 zipper(BiFunction)
+  * 만약 두 Observable에서 발행되는 아이템의 개수가 다르다면, 적은 쪽의 개수만큼만 발행된다.
+  * ex) 
+    * observable 1 : 1  2  3  4  5
+    * observable 2 : A  B  C  D
+    * result : 1A  2B  3C  4D

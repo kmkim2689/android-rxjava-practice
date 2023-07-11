@@ -353,10 +353,26 @@ class MainActivity : AppCompatActivity() {
                 }
             )*/
 
-        startWithOperator()
+        /*startWithOperator()
             .subscribe(
                 {
                     Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        zipOperator2()
+            .subscribe(
+                {
+                    it.forEach {
+                        Log.d(TAG, "onNext, $it")
+                    }
+
                 },
                 {
                     Log.d(TAG, "onError, $it")
@@ -374,15 +390,12 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, User(id=1, name=km, age=26)
-    onNext, User(id=1, name=demo1, age=15)
-    onNext, User(id=2, name=demo2, age=18)
-    onNext, User(id=3, name=demo3, age=15)
-    onNext, User(id=4, name=demo4, age=21)
-    onNext, User(id=5, name=demo5, age=23)
-    onNext, User(id=6, name=demo6, age=23)
-    onNext, User(id=7, name=demo7, age=21)
-    onNext, User(id=8, name=demo8, age=22)
+    onNext, BlogDetail(id=1, userId=1, title=title1, content=content1, user=User(id=1, name=demo1, age=15))
+    onNext, BlogDetail(id=2, userId=1, title=title2, content=content2, user=User(id=1, name=demo1, age=15))
+    onNext, BlogDetail(id=3, userId=2, title=title3, content=content3, user=User(id=2, name=demo2, age=18))
+    onNext, BlogDetail(id=4, userId=2, title=title4, content=content4, user=User(id=2, name=demo2, age=18))
+    onNext, BlogDetail(id=5, userId=2, title=title5, content=content5, user=User(id=2, name=demo2, age=18))
+    onNext, BlogDetail(id=6, userId=3, title=title6, content=content6, user=User(id=3, name=demo3, age=15))
     onComplete
      */
 

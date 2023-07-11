@@ -1,6 +1,8 @@
 package com.example.rxjava_practice
 
 import android.util.Log
+import com.example.rxjava_practice.data.Blog
+import com.example.rxjava_practice.data.BlogDetail
 import com.example.rxjava_practice.data.User
 import com.example.rxjava_practice.data.UserProfile
 import io.reactivex.rxjava3.core.Observable
@@ -10,6 +12,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 import java.lang.Exception
 import java.util.Arrays
 import java.util.concurrent.TimeUnit
+import java.util.function.BiFunction
 
 val mListNum = mutableListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 val arrayNum1 = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -35,6 +38,15 @@ val mUserProfileList = mutableListOf<UserProfile>(
     UserProfile(7, "demo7", 22, "https://test.com/7"),
     UserProfile(8, "demo8", 23, "https://test.com/8"),
     UserProfile(9, "demo9", 23, "https://test.com/9")
+)
+val mBlogList = mutableListOf(
+    Blog(1, 1, "title1", "content1"),
+    Blog(2, 1, "title2", "content2"),
+    Blog(3, 2, "title3", "content3"),
+    Blog(4, 2, "title4", "content4"),
+    Blog(5, 2, "title5", "content5"),
+    Blog(6, 3, "title6", "content6"),
+    Blog(7, 13, "title7", "content7"),
 )
 
 fun fromOperator() {
@@ -218,4 +230,48 @@ fun startWithOperator(): Observable<User> {
     // concat와 같은 효과
 //    return getNums2().startWith(getNums1())
     return getUser().startWith(Single.just(User(1, "km", 26)))
+}
+
+// basic zip usage
+fun zipOperator(): Observable<Any> {
+    val nums = Observable.just(1, 2, 3, 4, 5)
+    val chars = Observable.just("A", "B", "C", "D")
+
+    return Observable.zip(nums, chars, io.reactivex.rxjava3.functions.BiFunction { t1, t2 ->
+        "$t1$t2"
+    })
+}
+
+// practical zip usage
+
+fun getBlogs(): Observable<List<Blog>> {
+    return Observable.just(mBlogList)
+}
+
+fun getUsers(): Observable<List<User>> {
+    return Observable.just(mUserList)
+}
+
+fun zipOperator2(): Observable<List<BlogDetail>> {
+    // 여기서 이루고자 하는 것 : User 데이터와 Blog 데이터를 zip하여 BlogDetail 형태로 만들기
+    // userId와 매칭되는 것이 있다면
+    return Observable.zip(getUsers(), getBlogs(), io.reactivex.rxjava3.functions.BiFunction { t1, t2 ->
+        blogDetail(t1, t2)
+    })
+}
+
+fun blogDetail(t1: List<User>, t2: List<Blog>): List<BlogDetail> {
+    // if userIdd of a blog item matches the id of a user, change them into BlogDetail item using zip
+    val listBlogDetail: MutableList<BlogDetail> = emptyList<BlogDetail>().toMutableList()
+    t1.forEach { user ->
+        t2.forEach { blog ->
+            if (blog.userId == user.id) {
+                listBlogDetail.add(
+                    BlogDetail(blog.id, blog.userId, blog.title, blog.content, user)
+                )
+            }
+        }
+    }
+
+    return listBlogDetail
 }
