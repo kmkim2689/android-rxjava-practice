@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
                     )*/
 
         // 단순히 데이터를 변경하는 용도로 map을 이용한 경우
-        mapOperator()
+        /*mapOperator()
             .map {
                 it.age * 2
             }
@@ -195,22 +195,184 @@ class MainActivity : AppCompatActivity() {
                 {
                     Log.d(TAG, "onComplete")
                 }
-            )
+            )*/
 
         // Object의 타입을 바꾸고자 할 때... User -> UserProfile
-        mapOperator()
-            .map {
-                // User -> UserProfile
-                UserProfile(
-                    it.id,
-                    it.name,
-                    it.age,
-                    "https://test.com/${it.id}"
-                )
+        /*        mapOperator()
+                    .map {
+                        // User -> UserProfile
+                        UserProfile(
+                            it.id,
+                            it.name,
+                            it.age,
+                            "https://test.com/${it.id}"
+                        )
+                    }
+                    .subscribe(
+                        {
+                            Log.d(TAG, "onNext, $it")
+                        },
+                        {
+                            Log.d(TAG, "onError, $it")
+                        },
+                        {
+                            Log.d(TAG, "onComplete")
+                        }
+                    )*/
+
+        /*flatMapOperator()
+            .flatMap {
+                // observable(Observable<User>) -> (an)other observable(s) (Observable<UserProfile>)
+                // in flatMap, should return observable(s), not other type of objects.
+                // return Observable<UserProfile>
+                getUserProfile(it.id)
             }
             .subscribe(
                 {
                     Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        // 같은 작업을 하는 함수(flatmap)
+        /*flatMapOperator2()
+            .flatMap {
+                // get the list of Users and flatten!
+                // User 데이터를 하나하나 순회하고
+                Observable.fromIterable(it)
+                // 각 User 아이템들을 모아 하나의 Observable로 병합
+            }
+            .flatMap {
+                // User 데이터를 가져와 함수를 이용해 각 아이템을 UserProfile로 변환
+                getUserProfile(it.id)
+                // UserProfile 아이템들을 모아 하나의 Observable로 병합
+            }
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        /*        groupByOperator()
+                    .groupBy {
+                        // in groupBy, add some group(s) to the particular User item!
+                        // group by the age of users
+                        // 여기서 key가 어떻게 될 지 결정되는 것. 즉 여기서는 나이가 key가 됨
+                        it.age
+                    }
+                    .filter {
+                        // 23세인 사람만 가져오고 싶은 경우
+                        it.key == 23
+                    }
+                    .subscribe(
+                        {
+                            // onNext : GroupedObservable<Int, User> 얻어옴.
+                            // 여기서 Int값이 key에 해당되고, User가 value에 해당
+                            // flattened
+                            group ->
+                                group.subscribe(
+                                    // subscribe를 통해 얻어오는 값은 User, 즉 value에 해당
+                                    {
+                                        // onNext
+                                        Log.d(TAG, "onNext, key: ${group.key}, value: $it")
+                                    },
+                                    {
+                                        // onError
+                                        Log.d(TAG, "onError, $it")
+                                    }
+                                )
+                        },
+                        {
+                            Log.d(TAG, "onError, $it")
+                        },
+                        {
+                            Log.d(TAG, "onComplete")
+                        }
+                    )*/
+
+        // get lists by key using groupBy and flatMapSingle
+        /*groupByOperator()
+            .groupBy {
+                // in groupBy, add some group(s) to the particular User item!
+                // group by the age of users
+                // 여기서 key가 어떻게 될 지 결정되는 것. 즉 여기서는 나이가 key가 됨
+                it.age
+            }
+            // rxJava의 flatMapSingle() :
+            // Single type을 return해야한다. 따라서 flatMapSingle을 사용
+            .flatMapSingle { group ->
+                // rxJava의 toList() operator : 한 Observable에서 emit될 모든 아이템들을 모아 List인 Observable로 만들어 발행
+                group.toList()
+            }
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        /*mergeOperator()
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        /*concatOperator()
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        /*startWithOperator()
+            .subscribe(
+                {
+                    Log.d(TAG, "onNext, $it")
+                },
+                {
+                    Log.d(TAG, "onError, $it")
+                },
+                {
+                    Log.d(TAG, "onComplete")
+                }
+            )*/
+
+        zipOperator2()
+            .subscribe(
+                {
+                    it.forEach {
+                        Log.d(TAG, "onNext, $it")
+                    }
+
                 },
                 {
                     Log.d(TAG, "onError, $it")
@@ -228,29 +390,16 @@ class MainActivity : AppCompatActivity() {
 
     /*
     Log 결과
-    onNext, 30
-    onNext, 36
-    onNext, 40
-    onNext, 42
-    onNext, 46
-    onNext, 46
-    onNext, 44
-    onNext, 46
-    onNext, 46
+    onNext, BlogDetail(id=1, userId=1, title=title1, content=content1, user=User(id=1, name=demo1, age=15))
+    onNext, BlogDetail(id=2, userId=1, title=title2, content=content2, user=User(id=1, name=demo1, age=15))
+    onNext, BlogDetail(id=3, userId=2, title=title3, content=content3, user=User(id=2, name=demo2, age=18))
+    onNext, BlogDetail(id=4, userId=2, title=title4, content=content4, user=User(id=2, name=demo2, age=18))
+    onNext, BlogDetail(id=5, userId=2, title=title5, content=content5, user=User(id=2, name=demo2, age=18))
+    onNext, BlogDetail(id=6, userId=3, title=title6, content=content6, user=User(id=3, name=demo3, age=15))
     onComplete
      */
 
     /*
-    Log 결과
-    onNext, UserProfile(id=1, name=demo1, age=15, image=https://test.com/1)
-    onNext, UserProfile(id=2, name=demo2, age=18, image=https://test.com/2)
-    onNext, UserProfile(id=3, name=demo3, age=20, image=https://test.com/3)
-    onNext, UserProfile(id=4, name=demo4, age=21, image=https://test.com/4)
-    onNext, UserProfile(id=5, name=demo5, age=23, image=https://test.com/5)
-    onNext, UserProfile(id=6, name=demo6, age=23, image=https://test.com/6)
-    onNext, UserProfile(id=7, name=demo7, age=22, image=https://test.com/7)
-    onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
-    onNext, UserProfile(id=8, name=demo8, age=23, image=https://test.com/8)
-    onComplete
-    */
+
+     */
 }
