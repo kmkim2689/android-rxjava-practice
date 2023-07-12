@@ -1,4 +1,4 @@
-### Operators By Category
+## Operators By Category
 
 * references
     * https://reactivex.io/documentation/operators.html
@@ -236,3 +236,262 @@
     * observable 1 : 1  2  3  4  5
     * observable 2 : A  B  C  D
     * result : 1A  2B  3C  4D
+
+---
+
+## Observables and Observers
+
+### 1. Type of Observables and Observers
+* Observable Types
+    * Observable
+        * 가장 일반적
+    * Flowable
+    * Single
+    * Maybe
+    * Completable
+
+* Observer Types
+    * Observer
+        * 가장 일반적 - used with Observable
+    * SingleObserver
+        * used with Single Observable
+    * MaybeObserver
+        * used with Maybe Observable
+    * CompletableObserver
+        * used with Completable Observable
+
+* Use Cases
+    * Observable <> Observer
+        * Observable : the observable that emits **more than one** value
+        * when 2 use
+            * main use : if a user wants to download a file, the user should be ***continuously*** provided with the progress of the download.
+            * so, the Observable has to emit values at ***regular intervals***.
+            * that is, the developer should provide the value for once or more times.
+          
+    * Single <> SingleObserver ***
+      * when to use : network calls or calls to access database
+        * when the Observable has to emit **only one value**
+          * ex : a response from ***network call***
+          * the most common Observable Android developer will be using, as most of the applications involve network calls.
+      * two callbacks
+        * onSubscribe
+        * onSuccess
+          * !!! onNext와는 달리 **단 한 번만** 호출됨에 유의
+          * 즉, 반복문을 통해 1회 초과하여 발행하는 것이 필요하다면, 그 때는 Observer를 사용해야 한다.
+          * SingleObserver가 아무런 아이템도 emit할 수 없다면(예를 들어, 빈 리스트 호출), onSuccess가 호출되며 t는 빈 리스트가 된다.
+            * 즉, onError가 호출되는 것이 아님.
+        * onError
+
+    * Maybe <> MaybeObserver
+      * when to use : 1개 또는 0개 item을 emit해야할 때.
+        * when the observable has to emit a value or no value
+        * but, not recommended to use for Android App development.
+      * callbacks
+        * onSubscribe, onSuccess, onError, onComplete
+      * MaybeObserver의 경우, Observer과는 달리 onNext가 존재하지 않음.
+      * 또한, onSubscribe와 onSuccess가 둘 다 존재
+      * 아무런 아이템도 emit하지 않는다면, onSuccess는 호출되지 않는다.
+        * singleObserver과 비교되는 점...
+        
+    * Completable <> CompletableObserver
+      * when to use
+        * when the observable has to ***do some tasks*** **without emitting a value**
+      * callbacks => item을 발행하지 않기 때문에, onNext와 onSuccess가 존재하지 않음.
+        * onSubscribe
+        * onComplete => 이것 호출 전에 필요한 작업들을 수행
+        * onError => Exception 발생 시 호출
+
+    * Flowable <> Observer
+      * Flowable is **similar to Observable**
+      * but, what if the Observable is emitting too many values that cannot be received and consumed by the Observer?
+        * at that time, an error would be caused...
+        * in this case, the Observable needs to ***skip some values*** by strategy...
+          * to avoid an exception...
+        * For using this kind of strategy, the **Flowable** Observable can be used!
+          * handles the exception with a strategy
+          * the exception is called "**MissingBackPressureException**"
+          * the strategy is called "**BackPressureStrategy**"
+      
+      * BackPressure Strategies
+        * BackPressure.DROP
+          * discard the events that cannot be consumed by the Observer.
+          * 못 받을 것들은 그냥 버림
+        * BackPressure.BUFFER
+          * the source will buffer all the events until the subscriber can consume them
+          * 당장 못 쓰지만, 모든 것들을 저장해놓음. 그리고 subscriber가 사용할 여유가 생기면 그 때 사용
+          * 버퍼할 기본 사이즈를 지정 가능(최소 1)
+        * BackPressure.LATEST
+          * force to the source to keep only the latest items
+          * to do that, source may need to overwrite some previous values
+          * 최신 아이템만 저장해놓음. 이전 값들은 덮어씀
+        * BackPressure.MISSING
+          * don't want any backpressure strategy
+          * 만약 어떠한 전략도 쓰지 않아야 할 상황이라면, MISSING을 넘겨주면 됨.
+        * BackPressure.ERROR
+          * if we don't expect any backpressure, this can be used...
+          * MISSING과 ERROR의 경우, 만약 Observer가 감당하지 못하면(데이터가 emit되는 속도를 따라가지 못하면) MissingBackpressureException 발생
+          
+      * the way to convert Observable into Flowable
+        * Observable변수명.toFlowable(strategy)
+          * strategy 자리에는 위의 strategies 중 하나를 넣으면 됨
+
+   
+---
+
+## Disposables
+
+### What is a Disposable?
+* 왜 쓰는가?
+  * Observable + Observer를 만들어 비동기 처리에 사용
+  * 값이 어떤 Observable로부터 emit되면, 
+    * Observer는 그 Observable를 관찰하며 onNext를 통해 해당 데이터를 받음
+      * 그 데이터를 활용하여, UI 업데이트 등의 작업을 수행
+    * 그러다가, 더 이상 유저가 해당 UI를 볼 수 없는 상태가 되었다고 가정
+      * Activity의 실행 종료(finish), Activity/Fragment의 Destroy 등
+      * 이 때 Observer에는 어떤 일이 일어나는가?
+        * Activity가 Destroy된다고 해도, Observer는 여전히 Observable를 관찰한다.
+    * 그 이유로, UI가 Destroy되는 시점에, 이에 해당하는 **모든 Observable들을 처리**(Dispose, clear up)하는 것이 필요하다.
+    * 이 때 사용하는 것이 바로 Disposable
+  
+* 사용법
+  * Observer 클래스에서는 onSubscribe 콜백이 존재하는데, 이 함수의 매개변수가 바로 Disposable이다.
+    * disposable을 해당 observer의 disposable 매개변수로 설정(d)
+  * Activity/Fragment에서, onDestroy에서 disposable.dispose()를 호출하여 처리함
+  * 재사용성을 높이기 위하여, CompositeDisposable을 이용
+    * 액티비티에서 compositeDisposable 변수를 하나 선언
+      > val compositeDisposable = CompositeDisposable()
+      > onCreate에서
+        > compositeDisposable.add(Disposable.subscribe(...)구독하는 코드 작성)   
+      > onDestroy에서
+        > compositeDisposable.clear()  
+    * add된 subscription들은 동시에 수행된다는 것이 특징이다.
+   
+---
+
+## Schedulers
+
+### For **Threading** in RxJava
+* What is a Scheduler?
+  * A thread pool managing 1 or more threads
+  * Asynchronous tasks are possible only with the separation of threads using a Scheduler!!!
+
+* The principle of schedulers
+  * Whenever a scheduler needs to execute a task, the scheduler takes a thread from its pool and run the task in that thread
+  * 특정 쓰레드를 가져다가 어떤 동작이 해당 쓰레드 내부에서 실행되도록 하는 역할 수행
+
+
+
+* Type of Schedulers
+
+  * Main Thread
+    * AndroidSchedulers.mainThread() ***
+    * provided by the RxAndroid Extension library to RxJava
+      * RxJava doesn't have any option to access Android main thread
+      * to use this, RxAndroid should be implemented
+    * Access to the main thread -> User interaction happens here!
+    * performing some tasks(network calls...) in main thread makes UI unresponsive, eventually leads to ANR dialog.
+
+  * Schedulers.io() ***
+    * backed by an **unbounded** thread pool. 별도의 쓰레드 풀을 사용
+    * used for...
+      * non CPU-intensive I/O works
+      * ex) interaction with the file system, network calls, database interactions
+
+  * Schedulers.computation() ***
+    * backed by a **bounded** thread pool. 고정 크기의 쓰레드 풀을 사용
+    * size : "up to"(-> bounded) the number of available processors(the num of threads == the num of processors)
+    * used for...
+      * computational or CPU-intensive works
+      * ex) resizing images, processing large data sets
+    * should be careful about...
+      * when allocating more computation threads than available cores, performance will degrade
+      * due to context switching and thread creation overhead
+      
+  * Schedulers.newThread()
+    * create a new thread for each unit of work scheduled
+      * 새로운 쓰레드를 계속 생성
+    * new thread is spawned every time and no reuse happens => expensive scheduler
+    * seldom used
+    
+  * Schedulers.single() : 순차적으로 작업을 수행할 때
+    * backed up by a single thread executing tasks sequentially in the order requested
+
+* Default Threading in RxJava
+  * if threading not specified? - ex) subscribeOn, observeOn, or both
+    * the data will be emitted and processed by the current scheduler or thread(mainly by **main thread**)
+    * cf) **interval()** : operate on a **computation thread** by default
+* Upstream and Downstream
+  Observable.just("Hello")
+  .subscribe(System.out::println)
+  * Upstream: Observable.just("Hello")
+    Upstream은 Observable의 데이터 흐름에서 데이터를 생성하고 변환하는 부분을 나타냅니다. Upstream은 데이터를 발행하는 Observable이나 다른 연산자를 의미합니다. Upstream에서 발생한 데이터는 연속된 작업을 통해 downstream으로 전달됩니다.
+  * Downstream: .subscribe(System.out::println)
+    Downstream은 Observable의 데이터 흐름에서 데이터를 소비하고 처리하는 부분을 나타냅니다. Downstream은 Observer나 다른 연산자로 표현됩니다. Downstream에서는 Upstream에서 발행된 데이터를 받아들여 최종 결과를 생성하거나 추가적인 처리를 수행할 수 있습니다.    
+
+* How to specify a thread to execute an operator?
+  * use subscribeOn and(or) observeOn
+  * 쓰레드를 지정하여 작업을 스케줄링하는 데 사용되는 연산자
+  * Observable의 데이터 흐름과 관련된 쓰레드를 제어
+    * subscribeOn : upstream, Observable의 구독 단계에서 실행되는 쓰레드 지정
+      * Observable이 'subscribe될 때' 사용할 스케줄러를 지정
+        * Observable의 **생성** 및 데이터 **발행** 작업이 지정한 스케줄러에서 진행
+        * affects the upstream operators
+        * network calls, applying a filter
+        * can be called only once
+        
+          Observable.just("Hello")
+          .subscribeOn(Schedulers.io()) // Observable은 IO Thread에서 실행
+          .subscribe(System.out::println);
+
+    * observeOn : downstream, Observable의 데이터 처리 단계에서 실행되는 쓰레드 지정
+      * Observable이 **데이터**를 **처리**할 때 사용할 스케줄러 지정
+      * 데이터를 처리하는 작업이 지정한 스케줄러에서 진행
+      * affects the downstream operators 
+      * processing data, UI updates
+      * can be called multiple times
+      
+        Observable.just("Hello")
+        .subscribeOn(Schedulers.io()) // 데이터를 발행하는 Observable이 IO 쓰레드에서 실행
+        .observeOn(AndroidSchedulers.mainThread()) // 데이터 처리는 main thread에서 실행
+        .subscribe(System.out::println)
+      
+---
+
+## Hot and Cold Observables
+https://velog.io/@haero_kim/RxJava-Cold-Hot-Observable
+
+### Cold Observables - subscription needed + same value
+* **subscription**을 전제로 순서에 따른 아이템을 발행할 수 있는 Observable
+  * observer가 observable을 subscribe하지 않으면, 발행이 작동하지 않음
+* Observers는 발행받은 아이템 셋을 보유
+  * Observable이 제작된 방식에 따라 발행되는 아이템의 인스턴스는 다름
+  * 한 Observable에 대한 subscription이 진행 시, 여러 번 진행하면 항상 같은 값(들)이 발행된다.
+  * every time we observe the same observable, we get the same value(s) -> 손실도 없고, 새로 생기는 것도 없음
+* 유튜브에서 이미 올라온 영상을 클릭하는 상황에 비유 가능
+  * 그 누가 되었든, 특정 영상을 클릭하면 0초부터 영상의 끝까지 같은 정보를 제공받음. 시점은 중요하지 않음
+* 실제 구현에서 데이터를 취급하는 Observable들은 대부분 Cold Observable
+  * Retrofit, Room Queries
+
+### Hot Observables
+* Observer의 존재 여부와 상관 없이, Hot Observable은 아이템을 발행한다.
+* 특정 Observable을 언제 subscribe하느냐에 따라 observer가 발행받는 데이터가 달라짐
+  * 유튜브의 구독 및 알림설정 예시 - 구독 시점에 따라 다른 결과물 발행받음
+    * 우리가 특정 채널의 유튜브 채널을 구독하기 전에는, 구독 이전 시점에 올라온 영상들에 대한 알림을 받지 못함
+    * 다만 해당 채널에서는 쭉 영상을 올려오고 있었음
+    * 그러다가 구독을 한 이후, 올라오는 영상들에 대한 통지를 받을 수 있음.
+      * 영상이 올라오면, 모든 구독자들이 같은 데이터를 동시에 접하게 됨.
+* 정해진 데이터셋을 발행하는 Cold Observable과는 달리, Hot Observable은 이벤트를 발행한다.
+* Hot Observable을 구현하는 방법
+  * Observable + publish() + connect() => ConnectableObservable
+    * doesn't begin emitting an item when it is subscribed -> only when connect method is called, emitting starts
+    * to start emitting, call connect method
+  * Subjects
+
+### ConnectableObservable
+https://velog.io/@haero_kim/RxJava-Cold-Hot-Observable
+* takes any Observable and makes it ***hot***
+* convert cold observable into hot observable
+* Single Observable Source for different (multiple) observers
+  * using connect() -> emit
+* multicasting -> emit되기 시작하면, 같은 시간에 같은 데이터는 subscribe된 모든 observer에게 발행
+
