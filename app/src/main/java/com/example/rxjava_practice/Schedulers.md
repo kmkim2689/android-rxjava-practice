@@ -86,4 +86,3 @@
         .subscribe(System.out::println)
       
 * How to use Schedulers?
-  * 

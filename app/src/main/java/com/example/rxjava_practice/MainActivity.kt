@@ -571,7 +571,7 @@ class MainActivity : AppCompatActivity() {
 
 
         // switch to main thread again...
-        compositeDisposable.add(
+        /*compositeDisposable.add(
             Observable.just(mUserList)
                 // upstream
                 .flatMap {
@@ -597,7 +597,7 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "onComplete")
                     }
                 )
-        )
+        )*/
 
         /*
         Upstream ThreadName: RxCachedThreadScheduler-1
@@ -612,6 +612,138 @@ class MainActivity : AppCompatActivity() {
         onComplete
          */
 
+        // 같은 Observable에 대해 여러 번 subscribe를 진행하면, 항상 같은 값이 나온다.
+        // 이것이 바로 cold observable의 특징
+        /*coldObservable().subscribe(coldObserver())
+        Thread.sleep(200)
+        coldObservable().subscribe(coldObserver())
+        Thread.sleep(300)
+        coldObservable().subscribe(coldObserver())*/
+
+        // hot observable
+
+        // connectableobservable의 경우, connect 메소드 없이는 발행x
+        /*hotObservable().subscribe(
+            {
+                Log.d(TAG, "onNext, $it")
+            },
+            {
+                Log.d(TAG, "onError, $it")
+            },
+            {
+                Log.d(TAG, "onComplete")
+            }
+        )*/
+
+        // 로그 찍어보면, 아무것도 나오지 않음
+
+
+        // connectableobservable은 connect() 메소드가 있어야 비로소 발행 시작.
+        val hotObservable = hotObservable()
+        /*hotObservable.connect()
+
+        hotObservable.subscribe(
+            {
+                Log.d(TAG, "onNext, $it")
+            },
+            {
+                Log.d(TAG, "onError, $it")
+            },
+            {
+                Log.d(TAG, "onComplete")
+            }
+        )*/
+
+        /*
+        Log 결과
+        onComplete
+
+        이유?
+        connect()가 호출되는 시점에서부터 데이터의 발행이 시작되는데, 순식간에 데이터 발행을 마친 이후에야
+        observer가 subscribe하기 때문에 아무것도 나오지 않음.
+         */
+
+        // connect() 메소드를 subscription 이후로 이동시키면, 정상적으로 받아볼 수 있음
+        // observer가 subscribe한 이후에야 데이터가 발행되기 때문에 모든 데이터를 받아볼 수 있음
+
+        /*hotObservable.subscribe(
+            {
+                Log.d(TAG, "onNext1, $it")
+            },
+            {
+                Log.d(TAG, "onError1, $it")
+            },
+            {
+                Log.d(TAG, "onComplete1")
+            }
+        )
+
+        hotObservable.connect()*/
+
+        /*
+        onNext, User(id=1, name=demo1, age=15)
+        onNext, User(id=2, name=demo2, age=18)
+        onNext, User(id=3, name=demo3, age=15)
+        onNext, User(id=4, name=demo4, age=21)
+        onNext, User(id=5, name=demo5, age=23)
+        onNext, User(id=6, name=demo6, age=23)
+        onNext, User(id=7, name=demo7, age=21)
+        onNext, User(id=8, name=demo8, age=22)
+        onComplete
+
+        connect메소드를 호출한 시점에,
+         */
+
+        val hotObservable2 = hotObservable2()
+
+        hotObservable2.subscribe(
+            {
+                Log.d(TAG, "onNext1, $it")
+            },
+            {
+                Log.d(TAG, "onError1, $it")
+            },
+            {
+                Log.d(TAG, "onComplete1")
+            }
+        )
+
+        hotObservable2.connect()
+
+        Thread.sleep(5000)
+
+        hotObservable2.subscribe(
+            {
+                Log.d(TAG, "onNext2, $it")
+            },
+            {
+                Log.d(TAG, "onError2, $it")
+            },
+            {
+                Log.d(TAG, "onComplete2")
+            }
+        )
+
+        /*
+        onNext1, 0
+        onNext1, 1
+        onNext1, 2
+        onNext1, 3
+        onNext1, 4
+        onNext1, 5
+        onNext2, 5
+        onNext1, 6
+        onNext2, 6
+        onNext1, 7
+        onNext2, 7
+        onNext1, 8
+        onNext2, 8
+        onNext1, 9
+        onNext2, 9
+        onNext1, 10
+        onNext2, 10
+        ...
+         */
     }
 
     // get location every min
