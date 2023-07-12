@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import com.example.rxjava_practice.data.User
 import com.example.rxjava_practice.data.UserProfile
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.BackpressureStrategy
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observer
@@ -467,7 +469,7 @@ class MainActivity : AppCompatActivity() {
 //            )
 
         // add된 2개의 구독은 비동기적으로 동시에 수행된다...
-        compositeDisposable.add(
+        /*compositeDisposable.add(
             createObservable()
                 .subscribeOn(Schedulers.io())
                 .subscribe(
@@ -484,10 +486,10 @@ class MainActivity : AppCompatActivity() {
                         Log.d(TAG, "onComplete")
                     }
                 )
-        )
+        )*/
 
         // 여러 개의 subscribe 추가 가능
-        compositeDisposable.add(
+        /*compositeDisposable.add(
             intervalOperator().subscribe(
                 {
                     // onNext
@@ -501,7 +503,114 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG2, "onComplete")
                 }
             )
+        )*/
+
+        // scheduler usage - default : main thread
+        /*compositeDisposable.add(
+            Observable.just(mUserList)
+                .flatMap {
+                    Observable.fromIterable(it)
+                }
+                .subscribe(
+                    {
+                        Log.d(TAG, "onNext, $it ThreadName: ${Thread.currentThread().name}")
+                    },
+                    {
+                        Log.d(TAG, "onError, $it")
+                    },
+                    {
+                        Log.d(TAG, "onComplete")
+                    }
+                )
+        )*/
+
+        /*
+        onNext, User(id=1, name=demo1, age=15) ThreadName: main
+        onNext, User(id=2, name=demo2, age=18) ThreadName: main
+        onNext, User(id=3, name=demo3, age=15) ThreadName: main
+        onNext, User(id=4, name=demo4, age=21) ThreadName: main
+        onNext, User(id=5, name=demo5, age=23) ThreadName: main
+        onNext, User(id=6, name=demo6, age=23) ThreadName: main
+        onNext, User(id=7, name=demo7, age=21) ThreadName: main
+        onNext, User(id=8, name=demo8, age=22) ThreadName: main
+        onComplete
+         */
+
+        // Observable perform some tasks in the background
+        /*compositeDisposable.add(
+            Observable.just(mUserList)
+                .flatMap {
+                    Observable.fromIterable(it)
+                }
+                // switch to another thread using a Scheduler
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                    {
+                        Log.d(TAG, "onNext, $it ThreadName: ${Thread.currentThread().name}")
+                    },
+                    {
+                        Log.d(TAG, "onError, $it")
+                    },
+                    {
+                        Log.d(TAG, "onComplete")
+                    }
+                )
+        )*/
+
+        /*
+        onNext, User(id=1, name=demo1, age=15) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=2, name=demo2, age=18) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=3, name=demo3, age=15) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=4, name=demo4, age=21) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=5, name=demo5, age=23) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=6, name=demo6, age=23) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=7, name=demo7, age=21) ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=8, name=demo8, age=22) ThreadName: RxCachedThreadScheduler-1
+        onComplete
+         */
+
+
+        // switch to main thread again...
+        compositeDisposable.add(
+            Observable.just(mUserList)
+                // upstream
+                .flatMap {
+                    Log.d(TAG, "Upstream ThreadName: ${Thread.currentThread().name}")
+                    Observable.fromIterable(it)
+                }
+                // switch to another thread using a Scheduler
+                .subscribeOn(Schedulers.io())
+                // switch to main thread... rxAndroid has to be implemented
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    // downstream - main
+                    {
+                        // ui를 변경하는 작업이므로, UI 쓰레드 내부에서 이 작업이 이뤄져야 함
+                        // 이를 위해, observeOn을 이용하여 Main Thread로 context switching이 선행됨
+                        findViewById<TextView>(R.id.tv).text = it.toString()
+                        Log.d(TAG, "onNext, $it ThreadName: ${Thread.currentThread().name}")
+                    },
+                    {
+                        Log.d(TAG, "onError, $it")
+                    },
+                    {
+                        Log.d(TAG, "onComplete")
+                    }
+                )
         )
+
+        /*
+        Upstream ThreadName: RxCachedThreadScheduler-1
+        onNext, User(id=1, name=demo1, age=15) ThreadName: main
+        onNext, User(id=2, name=demo2, age=18) ThreadName: main
+        onNext, User(id=3, name=demo3, age=15) ThreadName: main
+        onNext, User(id=4, name=demo4, age=21) ThreadName: main
+        onNext, User(id=5, name=demo5, age=23) ThreadName: main
+        onNext, User(id=6, name=demo6, age=23) ThreadName: main
+        onNext, User(id=7, name=demo7, age=21) ThreadName: main
+        onNext, User(id=8, name=demo8, age=22) ThreadName: main
+        onComplete
+         */
 
     }
 

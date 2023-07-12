@@ -50,7 +50,14 @@
   * if threading not specified? - ex) subscribeOn, observeOn, or both
     * the data will be emitted and processed by the current scheduler or thread(mainly by **main thread**)
     * cf) **interval()** : operate on a **computation thread** by default
-    
+* Upstream and Downstream
+  Observable.just("Hello")
+  .subscribe(System.out::println)
+  * Upstream: Observable.just("Hello")
+    Upstream은 Observable의 데이터 흐름에서 데이터를 생성하고 변환하는 부분을 나타냅니다. Upstream은 데이터를 발행하는 Observable이나 다른 연산자를 의미합니다. Upstream에서 발생한 데이터는 연속된 작업을 통해 downstream으로 전달됩니다.
+  * Downstream: .subscribe(System.out::println)
+    Downstream은 Observable의 데이터 흐름에서 데이터를 소비하고 처리하는 부분을 나타냅니다. Downstream은 Observer나 다른 연산자로 표현됩니다. Downstream에서는 Upstream에서 발행된 데이터를 받아들여 최종 결과를 생성하거나 추가적인 처리를 수행할 수 있습니다.    
+
 * How to specify a thread to execute an operator?
   * use subscribeOn and(or) observeOn
   * 쓰레드를 지정하여 작업을 스케줄링하는 데 사용되는 연산자
@@ -76,4 +83,7 @@
         Observable.just("Hello")
         .subscribeOn(Schedulers.io()) // 데이터를 발행하는 Observable이 IO 쓰레드에서 실행
         .observeOn(AndroidSchedulers.mainThread()) // 데이터 처리는 main thread에서 실행
-        .subscribe(System.out::println);
+        .subscribe(System.out::println)
+      
+* How to use Schedulers?
+  * 
