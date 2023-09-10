@@ -20,12 +20,12 @@
       override fun onComplete() {
           Log.d(MainActivity.TAG, "onComplete")
       }
-  }
-  ```
+  
       override fun onNext(t: Int) {
           Log.d(MainActivity.TAG, "onNext, $t")
       }
-
+  }
+  ```
 * using lambda functions, more concise. readability increases
   * 인터페이스의 각 메소드를 람다식으로 표현 가능
   
