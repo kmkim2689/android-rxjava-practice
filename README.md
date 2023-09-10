@@ -7,8 +7,9 @@
 ### 0. the form of observer
 * verbose codes -> causes boilerplate codes
 
-      val observer = object : Observer<Int> {
-          override fun onSubscribe(d: Disposable) {
+  ```
+  val observer = object : Observer<Int> {
+      override fun onSubscribe(d: Disposable) {
           Log.d(MainActivity.TAG, "onSubscribe")
       }
     
@@ -19,7 +20,8 @@
       override fun onComplete() {
           Log.d(MainActivity.TAG, "onComplete")
       }
-    
+  }
+  ```
       override fun onNext(t: Int) {
           Log.d(MainActivity.TAG, "onNext, $t")
       }
